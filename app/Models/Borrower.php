@@ -9,4 +9,6 @@ class Borrower extends Model
 {
     /** @use HasFactory<\Database\Factories\BorrowerFactory> */
     use HasFactory;
+
+    protected $guarded = [];
 }

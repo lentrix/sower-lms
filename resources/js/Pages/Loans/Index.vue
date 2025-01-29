@@ -10,7 +10,7 @@ import { Head } from '@inertiajs/vue3';
     <AuthenticatedLayout>
        <PageContent>
             <div class="flex justify-between items-center">
-                <h2 class="text-2xl">Dashboard</h2>
+                <h2 class="text-2xl">Loans</h2>
             </div>
        </PageContent>
     </AuthenticatedLayout>

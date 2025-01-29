@@ -13,6 +13,6 @@ class BorrowerSeeder extends Seeder
      */
     public function run(): void
     {
-        Borrower::factory(100)->create();
+        Borrower::factory(300)->create();
     }
 }

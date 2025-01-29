@@ -4,6 +4,7 @@ import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 import { Link, useForm, usePage } from '@inertiajs/vue3';
+import { defineProps } from 'vue';
 
 defineProps({
     mustVerifyEmail: {
@@ -14,10 +15,12 @@ defineProps({
     },
 });
 
+
 const user = usePage().props.auth.user;
 
 const form = useForm({
-    name: user.name,
+    full_name: user.full_name,
+    user_name: user.user_name,
     email: user.email,
 });
 </script>
@@ -39,19 +42,35 @@ const form = useForm({
             class="mt-6 space-y-6"
         >
             <div>
-                <InputLabel for="name" value="Name" />
+                <InputLabel for="full_name" value="Full Name" />
 
                 <TextInput
-                    id="name"
+                    id="full_name"
                     type="text"
                     class="mt-1 block w-full"
-                    v-model="form.name"
+                    v-model="form.full_name"
                     required
                     autofocus
-                    autocomplete="name"
+                    autocomplete="full_name"
                 />
 
-                <InputError class="mt-2" :message="form.errors.name" />
+                <InputError class="mt-2" :message="form.errors.full_name" />
+            </div>
+
+            <div>
+                <InputLabel for="user_name" value="User Name" />
+
+                <TextInput
+                    id="user_name"
+                    type="text"
+                    class="mt-1 block w-full"
+                    v-model="form.user_name"
+                    required
+                    autofocus
+                    autocomplete="user_name"
+                />
+
+                <InputError class="mt-2" :message="form.errors.full_name" />
             </div>
 
             <div>

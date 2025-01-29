@@ -12,9 +12,9 @@ const showingNavigationDropdown = ref(false);
 
 <template>
     <div>
-        <div class="min-h-screen bg-gray-100 dark:bg-gray-900">
+        <div class="min-h-screen bg-gray-200 dark:bg-gray-900">
             <nav
-                class="border-b border-gray-100 bg-white dark:border-gray-700 dark:bg-gray-800"
+                class="border-b border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-800"
             >
                 <!-- Primary Navigation Menu -->
                 <div class="mx-auto px-4 sm:px-6 lg:px-8">
@@ -33,17 +33,25 @@ const showingNavigationDropdown = ref(false);
                             <div
                                 class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex"
                             >
-                                <NavLink
-                                    :href="route('dashboard')"
-                                    :active="route().current('dashboard')"
-                                >
-                                    Dashboard
+                                <NavLink :href="route('dashboard')" :active="$page.url.startsWith('/dashboard')">
+                                    <font-awesome-icon icon="fa-solid fa-house"></font-awesome-icon>
+                                    &nbsp;Dashboard
                                 </NavLink>
-                                <NavLink
-                                    :href="route('borrowers')"
-                                    :active="route().current('borrowers')"
-                                >
-                                    Borrowers
+                                <NavLink :href="route('borrowers')" :active="$page.url.startsWith('/borrowers')">
+                                    <font-awesome-icon icon="fa-solid fa-users"></font-awesome-icon>
+                                    &nbsp;Borrowers
+                                </NavLink>
+                                <NavLink :href="route('loans')" :active="$page.url.startsWith('/loans')">
+                                    <font-awesome-icon icon="fa-solid fa-money-bill-1"></font-awesome-icon>
+                                    &nbsp;Loans
+                                </NavLink>
+                                <NavLink :href="route('payments')" :active="$page.url.startsWith('/payments')">
+                                    <font-awesome-icon icon="fa-solid fa-coins"></font-awesome-icon>
+                                    &nbsp;Payments
+                                </NavLink>
+                                <NavLink :href="route('reports')" :active="$page.url.startsWith('/reports')">
+                                    <font-awesome-icon icon="fa-solid fa-coins"></font-awesome-icon>
+                                    &nbsp;Reports
                                 </NavLink>
                             </div>
                         </div>
@@ -58,7 +66,7 @@ const showingNavigationDropdown = ref(false);
                                                 type="button"
                                                 class="inline-flex items-center rounded-md border border-transparent bg-white px-3 py-2 text-sm font-medium leading-4 text-gray-500 transition duration-150 ease-in-out hover:text-gray-700 focus:outline-none dark:bg-gray-800 dark:text-gray-400 dark:hover:text-gray-300"
                                             >
-                                                {{ $page.props.auth.user.user_name }}
+                                                <div class="bg-green-800 px-2 text-gray-300 py-1 rounded">{{ $page.props.auth.user.user_name }}</div>
 
                                                 <svg
                                                     class="-me-0.5 ms-2 h-4 w-4"

@@ -6,6 +6,31 @@ import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { createApp, h } from 'vue';
 import { ZiggyVue } from '../../vendor/tightenco/ziggy';
 
+import Toast from "vue-toastification";
+import "vue-toastification/dist/index.css";
+
+import { library } from '@fortawesome/fontawesome-svg-core';
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+import { faCoins, faEdit, faEye, faFileInvoice, faFilePdf, faFloppyDisk, faHouse, faMoneyBill1, faUserPlus, faUsers, faUserSecret } from '@fortawesome/free-solid-svg-icons';
+
+library.add(faUserSecret);
+library.add(faHouse);
+library.add(faUsers);
+library.add(faUserPlus);
+library.add(faEye);
+library.add(faEdit);
+library.add(faFloppyDisk);
+library.add(faFilePdf);
+library.add(faMoneyBill1);
+library.add(faCoins);
+library.add(faFileInvoice);
+
+const toast_options = {
+    timeout: 3000,
+    position: "bottom-right",
+    closeOnClick: true,
+}
+
 // const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 const appName = 'Sower | Loan Management System';
 
@@ -20,9 +45,11 @@ createInertiaApp({
         return createApp({ render: () => h(App, props) })
             .use(plugin)
             .use(ZiggyVue)
+            .use(Toast, toast_options)
+            .component('font-awesome-icon', FontAwesomeIcon)
             .mount(el);
     },
     progress: {
-        color: '#4B5563',
+        color: '#338855',
     },
 });

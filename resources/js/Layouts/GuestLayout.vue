@@ -5,7 +5,7 @@ import { Link } from '@inertiajs/vue3';
 
 <template>
     <div
-        class="flex min-h-screen flex-col items-center bg-gray-100 pt-6 sm:justify-center sm:pt-0 dark:bg-gray-900"
+        class="flex min-h-screen flex-col items-center bg-gray-200 pt-6 sm:justify-center sm:pt-0 dark:bg-gray-900"
     >
         <div>
             <Link href="/">
@@ -17,6 +17,12 @@ import { Link } from '@inertiajs/vue3';
             class="mt-6 w-full overflow-hidden bg-white px-6 py-4 shadow-md sm:max-w-md sm:rounded-lg dark:bg-gray-800"
         >
             <slot />
+        </div>
+
+        <div>
+            <p class="mt-8 text-center text-xs text-gray-600 dark:text-gray-400">
+                &copy; 2021 All rights reserved.
+            </p>
         </div>
     </div>
 </template>
