@@ -33,7 +33,7 @@ const submit = () => {
 
         <PageContent width="40">
             <div class="w-md mx-auto">
-                <h2 class="text-2xl">Create Borrower</h2>
+                <h2 class="text-2xl">Edit Borrower</h2>
                 <form @submit.prevent="submit">
                     <div class="flex gap-4">
                         <div class="flex-1">

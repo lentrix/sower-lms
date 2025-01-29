@@ -33,7 +33,6 @@ class BorrowerController extends Controller
     }
 
     public function create() {
-        sleep(4);
         return inertia('Borrowers/Create');
     }
 
