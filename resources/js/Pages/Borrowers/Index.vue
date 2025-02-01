@@ -39,16 +39,29 @@ const searchBorrower = () => {
                 <thead>
                     <tr class="bg-green-900 text-white">
                         <th>Name</th>
-                        <th>Address</th>
+                        <th>Address & Contacts</th>
                         <th>Active Loans</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="b in borrowers" :key="b.id" class="even:bg-green-100 dark:even:bg-gray-900" >
+                    <tr v-for="b in borrowers.data" :key="b.id" class="even:bg-green-100 dark:even:bg-gray-900" >
                         <td>{{ b.last_name }}, {{ b.first_name }} {{ b.middle_name }}</td>
-                        <td>{{ b.address }}</td>
-                        <td></td>
+                        <td>
+                            <div class="flex flex-col">
+                                <div>{{ b.address }}</div>
+                                <div>{{ b.contact_no }}</div>
+                            </div>
+                        </td>
+                        <td>
+                            <div v-if="b.activeLoan" class="flex flex-col">
+                                <div>Category: {{ b.activeLoan.plan.name }}</div>
+                                <div>₱ {{ b.activeLoan.formattedAmount }}</div>
+                            </div>
+                            <div v-else class="text-green-600 italic">
+                                No active loan.
+                            </div>
+                        </td>
                         <td>
                             <div class="flex justify-center gap-2">
                                 <Link :href="'/borrowers/' + b.id" class="text-green-500">

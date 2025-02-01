@@ -11,16 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('borrowers', function (Blueprint $table) {
+        Schema::create('penalties', function (Blueprint $table) {
             $table->id();
-            $table->string('first_name');
-            $table->string('middle_name')->nullable();
-            $table->string('last_name');
-            $table->string('contact_no');
-            $table->string('address');
-            $table->string('email');
-            $table->string('tax_id');
+            $table->bigInteger('payment_schedule_id')->unsigned();
+            $table->double('amount');
             $table->timestamps();
+            $table->foreign('payment_schedule_id')->references('id')->on('payment_schedules');
         });
     }
 
@@ -29,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('borrowers');
+        Schema::dropIfExists('penalties');
     }
 };

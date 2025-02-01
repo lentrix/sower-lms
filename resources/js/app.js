@@ -11,7 +11,7 @@ import "vue-toastification/dist/index.css";
 
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
-import { faCoins, faEdit, faEye, faFileInvoice, faFilePdf, faFloppyDisk, faHouse, faMoneyBill1, faUserPlus, faUsers, faUserSecret } from '@fortawesome/free-solid-svg-icons';
+import { faCoins, faEdit, faEye, faFileInvoice, faFilePdf, faFloppyDisk, faHandHoldingDollar, faHouse, faMoneyBill1, faUserPlus, faUsers, faUserSecret } from '@fortawesome/free-solid-svg-icons';
 
 library.add(faUserSecret);
 library.add(faHouse);
@@ -24,6 +24,7 @@ library.add(faFilePdf);
 library.add(faMoneyBill1);
 library.add(faCoins);
 library.add(faFileInvoice);
+library.add(faHandHoldingDollar);
 
 const toast_options = {
     timeout: 3000,

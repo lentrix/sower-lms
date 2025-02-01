@@ -1,0 +1,24 @@
+Basic System Entry
+- Loan Types
+- Borrower Information
+- Loans
+    - Loan Plan based on Types
+    -
+-Payments
+    - Must allow one-time payment for distribution to
+        several payment schedules
+    - Charging of penalties to over due Payments
+        will be performed by the staff
+        whenever needed
+
+Business Logic
+- Penalty computations
+    - Arawan: a day after the maturity
+    - Weekly: after two consecutive weeks of no payment
+    - Bi-Monthly: after 5 days of scheduled due date.
+
+REPORTS
+- See Active Loaners and Dues (for collectors)
+- Payments per Loaners
+- Cash Receipts (Daily)
+-

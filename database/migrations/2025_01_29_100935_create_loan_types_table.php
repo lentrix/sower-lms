@@ -11,15 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('borrowers', function (Blueprint $table) {
+        Schema::create('loan_types', function (Blueprint $table) {
             $table->id();
-            $table->string('first_name');
-            $table->string('middle_name')->nullable();
-            $table->string('last_name');
-            $table->string('contact_no');
-            $table->string('address');
-            $table->string('email');
-            $table->string('tax_id');
+            $table->string('name',50);
+            $table->string('description');
             $table->timestamps();
         });
     }
@@ -29,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('borrowers');
+        Schema::dropIfExists('loan_types');
     }
 };

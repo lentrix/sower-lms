@@ -11,4 +11,16 @@ class Borrower extends Model
     use HasFactory;
 
     protected $guarded = [];
+
+    protected $appends = ['activeLoan'];
+
+    public function loans() {
+        return $this->hasMany(Loan::class);
+    }
+
+    public function getActiveLoanAttribute() {
+        return Loan::where('status','<>',3)
+            ->where('borrower_id', $this->id)
+            ->first();
+    }
 }
