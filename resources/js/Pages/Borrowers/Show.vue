@@ -2,18 +2,29 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import PageContent from '@/Components/PageContent.vue';
 import { Head, Link, usePage } from '@inertiajs/vue3';
-import { defineProps, onMounted } from 'vue';
+import { defineProps, ref, computed, watch, onMounted } from 'vue';
 import { useToast } from "vue-toastification";
+import LoanTable from '@/Components/LoanTable.vue';
 
 const props = defineProps({
     borrower: null,
     payment_schedules: null,
-    alerts: null
+    alerts: null,
+    pending_loan: null,
+    totalAmountDue: null,
+    totalPenalty: null,
+    totalLoanPayment: null,
+    totalPenaltyPayment: null
 })
 
 const toast = useToast();
 
-if(props.alerts.success) toast.success(props.alerts.success);
+const alerts = props.alerts
+
+watch(()=>props.alerts, () => {
+    toast.success(props.alerts.success)
+})
+
 
 const formattedDate = (dateStr, monthFormat="long") => {
     const date = new Date(dateStr)
@@ -30,7 +41,7 @@ const money = Intl.NumberFormat('en-PH',{style: 'currency', currency:"php"})
 </script>
 
 <template>
-    <Head title="Dashboard" />
+    <Head title="View Borrower" />
 
     <AuthenticatedLayout>
        <PageContent>
@@ -48,7 +59,7 @@ const money = Intl.NumberFormat('en-PH',{style: 'currency', currency:"php"})
                 </div>
             </div>
             <div class="flex items-start gap-4">
-                <div class="w-2/6 px-4 py-2 rounded bg-green-100 dark:bg-green-800">
+                <div class="w-2/7 px-4 py-2 rounded bg-green-100 dark:bg-green-800">
                     <h4 class="text-2xl mb-2">Personal Information</h4>
                     <hr>
                     <table class="mt-3">
@@ -86,53 +97,26 @@ const money = Intl.NumberFormat('en-PH',{style: 'currency', currency:"php"})
                         </tbody>
                     </table>
                 </div>
-                <div class="w-4/6 px-4 py-2 rounded bg-green-100 dark:bg-green-800">
+                <div class="flex-1 px-4 py-2 rounded bg-green-100 dark:bg-green-800">
                     <h4 class="text-2xl">Loan Summary</h4>
                     <hr>
                     <div v-if="borrower.activeLoan" class="flex flex-row gap-4">
                         <div>
-                            <table>
-                                <tbody>
-                                    <tr>
-                                        <th>Category</th>
-                                        <td>
-                                            {{ borrower.activeLoan.plan.name }}
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th>Loan Plan</th>
-                                        <td>{{ borrower.activeLoan.loan_plan.planText }}</td>
-                                    </tr>
-                                    <tr>
-                                        <th>Principal</th>
-                                        <td>{{ money.format(borrower.activeLoan.amount) }}</td>
-                                    </tr>
-                                    <tr>
-                                        <th>Interest Rate</th>
-                                        <td>{{ borrower.activeLoan.loan_plan.interest }}%</td>
-                                    </tr>
-                                    <tr>
-                                        <th>Amortization</th>
-                                        <td>{{ money.format(borrower.activeLoan.amortization) }}</td>
-                                    </tr>
-                                    <tr>
-                                        <th>Purpose</th>
-                                        <td>{{ borrower.activeLoan.purpose }}</td>
-                                    </tr>
-                                    <tr>
-                                        <th>Status</th>
-                                        <td>{{ borrower.activeLoan.status }} | {{ borrower.activeLoan.statusText }}</td>
-                                    </tr>
-                                    <tr v-if="borrower.activeLoan.status==2">
-                                        <th>Release Date</th>
-                                        <td>{{ formattedDate(borrower.activeLoan.released_at) }}</td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                            <LoanTable :loan="borrower.activeLoan"></LoanTable>
+                            <div class="py-8 flex flex-col gap-2">
+                                <Link :href="'/loans/edit/' + borrower.activeLoan.id" class="px-8 py-2 rounded bg-indigo-700 text-white border border-indigo-500">
+                                    <font-awesome-icon icon="fa-solid fa-edit"></font-awesome-icon>
+                                    Edit Loan
+                                </Link>
+                                <Link :href="'/payments/payee/' + borrower.id" class="px-8 py-2 rounded bg-teal-700 text-white border border-indigo-500">
+                                    <font-awesome-icon icon="fa-solid fa-money-bill-1"></font-awesome-icon>
+                                    Payment
+                                </Link>
+                            </div>
                         </div>
                         <div class="flex-1">
-                            <h5 class="text-xl">Payment Schedule</h5>
-                            <table>
+                                <h5 class="text-xl">Payment Schedule</h5>
+                            <table class="mb-4">
                                 <thead>
                                     <tr>
                                         <th>Due Date</th>
@@ -156,11 +140,36 @@ const money = Intl.NumberFormat('en-PH',{style: 'currency', currency:"php"})
                                             {{ money.format(psched.penaltyPayment+psched.totalPayments) }}
                                         </td>
                                     </tr>
+                                    <tr>
+                                        <td>TOTAL</td>
+                                        <td class="text-right">{{ money.format(totalAmountDue) }}</td>
+                                        <td class="text-right">{{ money.format(totalPenalty) }}</td>
+                                        <td class="text-right">{{ money.format(totalLoanPayment) }}</td>
+                                        <td class="text-right">{{ money.format(totalPenaltyPayment) }}</td>
+                                        <td class="text-right">{{ money.format(totalPenaltyPayment + totalLoanPayment) }}</td>
+                                    </tr>
                                 </tbody>
+                                <!-- <Link method="post" :href="'/loans/set-status/0/' + borrower.activeLoan.id">Reset</Link> -->
                             </table>
                         </div>
                     </div>
-                    <div v-else>
+                    <div v-if="pending_loan">
+                        <div class="flex gap-4">
+                            <div class="flex-1">
+                                <h4 class="text-xl my-3">Pending Loan</h4>
+                                <LoanTable :loan="pending_loan"></LoanTable>
+                            </div>
+                            <div class="flex-1">
+                                <div class="flex flex-col p-8 w-[20rem]">
+                                    <Link method="post" v-if="pending_loan.status==0" :href="'/loans/set-status/1/' + pending_loan.id" class="bg-teal-700 text-white rounded px-8 py-4 text-center mb-3">Confirm</Link>
+                                    <Link method="post" :href="'/loans/set-status/2/' + pending_loan.id" class="bg-blue-700 text-white rounded px-8 py-4 text-center mb-3">Release</Link>
+                                    <Link method="post" :href="'/loans/set-status/4/' + pending_loan.id" class="bg-red-700 text-white rounded px-8 py-4 text-center mb-3">Denied</Link>
+                                    <Link method="post" :href="'/loans/set-status/5/' + pending_loan.id" class="bg-purple-700 text-white rounded px-8 py-4 text-center mb-3">Incomplete</Link>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div v-if="!borrower.activeLoan && !pending_loan">
                         <div class="text-green-600 italic">No Active Loan</div>
                         <div class="flex items-center">
                             <Link :href="'/loans/create/' + borrower.id" class="bg-green-700 text-white px-4 py-2 rounded my-4">

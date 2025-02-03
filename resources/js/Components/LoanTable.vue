@@ -1,0 +1,60 @@
+<script setup>
+
+defineProps({
+    loan: Object
+})
+
+const money = Intl.NumberFormat('en-PH',{style: 'currency', currency:"php"})
+
+const formattedDate = (dateStr, monthFormat="long") => {
+    const date = new Date(dateStr)
+    const formatter = new Intl.DateTimeFormat("en-US", {
+        month: monthFormat,
+        day: "numeric",
+        year: "numeric"
+    })
+    return formatter.format(date)
+}
+
+</script>
+
+<template>
+    <table>
+        <tbody>
+            <tr>
+                <th>Category</th>
+                <td>
+                    {{ loan.plan.name }}
+                </td>
+            </tr>
+            <tr>
+                <th>Loan Plan</th>
+                <td>{{ loan.loan_plan.planText }}</td>
+            </tr>
+            <tr>
+                <th>Principal</th>
+                <td>{{ money.format(loan.amount) }}</td>
+            </tr>
+            <tr>
+                <th>Interest Rate</th>
+                <td>{{ loan.loan_plan.interest }}%</td>
+            </tr>
+            <tr>
+                <th>Amortization</th>
+                <td>{{ money.format(loan.amortization) }}</td>
+            </tr>
+            <tr>
+                <th>Purpose</th>
+                <td>{{ loan.purpose }}</td>
+            </tr>
+            <tr>
+                <th>Status</th>
+                <td>{{ loan.status }} | {{ loan.statusText }}</td>
+            </tr>
+            <tr v-if="loan.status==2">
+                <th>Release Date</th>
+                <td>{{ formattedDate(loan.released_at) }}</td>
+            </tr>
+        </tbody>
+    </table>
+</template>

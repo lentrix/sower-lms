@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\BorrowerController;
+use App\Http\Controllers\LoanController;
+use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -24,13 +26,17 @@ Route::middleware('auth')->group(function () {
     Route::get('/borrowers',[BorrowerController::class, 'index'])->name('borrowers');
     Route::post('/borrowers', [BorrowerController::class, 'store']);
 
-    Route::get('/loans', function() {
-        return Inertia::render('Loans/Index');
-    })->name('loans');
+    Route::get('/loans', [LoanController::class, 'index'])->name('loans');
+    Route::post('/loans', [LoanController::class, 'store'])->name('loans.store');
+    Route::put('/loans/{loan}', [LoanController::class, 'update'])->name('loans.update');
+    Route::post('/loans/set-status/{status}/{loan}', [LoanController::class, 'setStatus'])->name('loans.set-status');
+    Route::get('/loans/edit/{loan}', [LoanController::class, 'edit'])->name('loans.edit');
+    Route::get('/loans/create/{borrower}', [LoanController::class, 'create'])->name('loans.create-with-borrower');
+    Route::get('/loans/create', [LoanController::class, 'create'])->name('loans.create');
 
-    Route::get('/payments', function() {
-        return Inertia::render('Payments/Index');
-    })->name('payments');
+    Route::get('/payments', [PaymentController::class, 'index'])->name('payments');
+    Route::post('/payments', [PaymentController::class, 'store'])->name('payments.store');
+    Route::get('/payments/payee/{borrower}', [PaymentController::class, 'pay'])->name('payments.pay');
 
     Route::get('/reports', function() {
         return Inertia::render('Reports/Index');

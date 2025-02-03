@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Borrower;
+use App\Models\LoanPayment;
+use App\Models\Penalty;
+use App\Models\PenaltyPayment;
 use Illuminate\Http\Request;
 
 class BorrowerController extends Controller
@@ -53,9 +56,21 @@ class BorrowerController extends Controller
     }
 
     public function show(Borrower $borrower) {
+
         return inertia('Borrowers/Show', [
             'borrower' => $borrower,
-            'payment_schedules' => $borrower->activeLoan ? $borrower->activeLoan->paymentSchedules : []
+            'payment_schedules'     => $borrower->activeLoan ? $borrower->activeLoan->paymentSchedules : [],
+            'pending_loan'          => $borrower->getPendingLoan(),
+            'totalAmountDue'        => $borrower->activeLoan ? $borrower->activeLoan->amortization * $borrower->activeLoan->paymentSchedules->count() : 0,
+            'totalPenalty'          => $borrower->activeLoan ? Penalty::whereHas('paymentSchedule', function($q1) use ($borrower) {
+                                            $q1->where('loan_id', $borrower->activeLoan->id);
+                                        })->sum('amount') : 0,
+            'totalLoanPayment'      => $borrower->activeLoan ? LoanPayment::whereHas('paymentSchedule', function($q1) use ($borrower) {
+                                            $q1->where('loan_id', $borrower->activeLoan->id);
+                                        })->sum('amount') : 0,
+            'totalPenaltyPayment'   => $borrower->activeLoan ? PenaltyPayment::whereHas('payment', function($q1) use ($borrower) {
+                                            $q1->where('loan_id', $borrower->activeLoan->id);
+                                        })->sum('amount') : 0
         ]);
     }
 

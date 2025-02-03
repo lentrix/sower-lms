@@ -18,6 +18,7 @@ return new class extends Migration
             $table->float('interest');
             $table->float('penalty');
             $table->string("config")->nullable();
+            $table->integer('payment_schedules')->nullable();
             $table->timestamps();
 
             $table->foreign('loan_type_id')->references('id')->on('loan_types');

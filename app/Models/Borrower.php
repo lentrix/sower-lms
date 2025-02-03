@@ -19,7 +19,13 @@ class Borrower extends Model
     }
 
     public function getActiveLoanAttribute() {
-        return Loan::where('status','<>',3)
+        return Loan::where('status','=',2)
+            ->where('borrower_id', $this->id)
+            ->first();
+    }
+
+    public function getPendingLoan() {
+        return Loan::whereIn('status',[0,1])
             ->where('borrower_id', $this->id)
             ->first();
     }
