@@ -4,6 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\Borrower;
 use App\Models\Loan;
+use App\Models\LoanPayment;
+use App\Models\Payment;
+use App\Models\PenaltyPayment;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -38,13 +42,65 @@ class PaymentController extends Controller
     }
 
     public function store(Request $request) {
+
+        // dd($request->all());
+
         $loan = Loan::findOrFail($request->loan_id);
 
-        $paidAmount = $request->amount_paid;
+        $amountToPay = $request->amount_paid;
         $orNo = $request->or_number;
 
-        $unsettled = $loan->getUnsettledPaymentSchedules();
+        DB::beginTransaction();
 
+        try {
 
+            $pmt = Payment::create([
+                'loan_id' => $loan->id,
+                'or_number' => $orNo,
+                'amount' => $amountToPay,
+                'date' => now()
+            ]);
+
+            $unsettledLoan = $loan->getUnsettledPaymentSchedules();
+            $unsettledPenalty = $loan->getUnsettledPenalties();
+
+            foreach($unsettledPenalty as $unP) {
+                if($amountToPay==0) break;
+
+                $payAmount = $amountToPay >= $unP['balance'] ? $unP['balance'] : $amountToPay;
+
+                PenaltyPayment::create([
+                    'payment_id' => $pmt->id,
+                    'penalty_id' => $unP['penalty']->id,
+                    'amount' => $payAmount
+                ]);
+
+                $amountToPay-=$payAmount;
+            }
+
+            foreach($unsettledLoan as $unL) {
+                if($amountToPay<=0) break;
+
+                $payAmount = $payAmount = $amountToPay >= $unL['balance'] ? $unL['balance'] : $amountToPay;
+
+                LoanPayment::create([
+                    'payment_id' => $pmt->id,
+                    'payment_schedule_id' => $unL['paymentSchedule']->id,
+                    'amount' => $payAmount,
+                    'interest' => 0,
+                    'principal' => 0
+                ]);
+
+                $amountToPay-=$payAmount;
+            }
+
+            DB::commit();
+
+        }catch(Exception $ex) {
+            DB::rollBack();
+            dd($ex);
+        }
+
+        return redirect('/borrowers/' . $loan->borrower_id)->with('success','Payment has been recorded successfully!');
     }
 }

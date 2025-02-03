@@ -189,4 +189,25 @@ class Loan extends Model
         return $data;
     }
 
+    public function getUnsettledPenalties() {
+        $penalties = Penalty::whereHas('paymentSchedule', function($q1){
+            $q1->where('loan_id', $this->id);
+        })->get();
+
+        $data = [];
+
+        foreach($penalties as $penalty) {
+            $amount = $penalty->amount;
+            $paid = $penalty->penaltyPayments->sum('amount');
+            if($amount > $paid) {
+                $data[] = [
+                    'penalty' => $penalty,
+                    'balance' => $amount-$paid
+                ];
+            }
+        }
+
+        return $data;
+    }
+
 }

@@ -19,7 +19,7 @@ return new class extends Migration
             $table->double('interest');
             $table->double('principal');
             $table->timestamps();
-            $table->foreign('payment_id')->references('id')->on('payments');
+            $table->foreign('payment_id')->references('id')->on('payments')->onDelete('cascade');
             $table->foreign('payment_schedule_id')->references('id')->on('payment_schedules');
         });
     }

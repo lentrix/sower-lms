@@ -17,7 +17,7 @@ return new class extends Migration
             $table->bigInteger('penalty_id')->unsigned();
             $table->double('amount');
             $table->timestamps();
-            $table->foreign('payment_id')->references('id')->on('payments');
+            $table->foreign('payment_id')->references('id')->on('payments')->onDelete('cascade');
             $table->foreign('penalty_id')->references('id')->on('penalties');
         });
     }

@@ -130,7 +130,7 @@ const money = Intl.NumberFormat('en-PH',{style: 'currency', currency:"php"})
                                 <tbody>
                                     <tr v-for="psched in payment_schedules" :key="psched.id">
                                         <td>{{ formattedDate(psched.due_date,"short") }}</td>
-                                        <td class="text-right">{{ money.format(borrower.activeLoan.amortization) }}</td>
+                                        <td class="text-right">{{ money.format(psched.amount_due) }}</td>
                                         <td class="text-right text-red-700">{{ money.format(psched.penaltyAmount) }}</td>
                                         <td class="text-right">
                                             {{ money.format(psched.totalPayments) }}

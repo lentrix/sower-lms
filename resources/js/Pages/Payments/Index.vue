@@ -18,7 +18,17 @@ const searchResults = ref([])
 
 const payee = ref('')
 
+const getCurrentDate = () => {
+    const date = new Date();
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-indexed
+    const day = String(date.getDate()).padStart(2, '0');
+
+    return `${year}-${month}-${day}`;
+}
+
 const form = useForm({
+    date: getCurrentDate(),
     or_number: '',
     amount_paid: '',
     loan_id: props.selectedPayee ? props.selectedPayee.activeLoan.id : ''
@@ -107,22 +117,29 @@ const searchPayee = () => {
                                 </tr>
                             </tbody>
                         </table>
-                        <form @submit.prevent="submitPayment" class="mx-2 my-3">
+                        <form @submit.prevent="submitPayment" class="mx-2 my-3" v-if="unPaidSchedules.total>0">
                             <div class="mb-3 flex flex-col">
                                 <label for="or_number">O.R. Number:</label>
-                                <input v-model="form.or_number" type="text" id="or_number" :class="form.errors.or_number ? 'border-red-400' :''" class="block w-full border-gray-500 rounded-md focus:border-green-500 focus:ring-green-500 sm:text-sm dark:bg-gray-600" />
+                                <input v-model="form.or_number" ref="orno" type="text" id="or_number" :class="form.errors.or_number ? 'border-red-400' :''" class="block w-full border-gray-500 rounded-md focus:border-green-500 focus:ring-green-500 sm:text-sm dark:bg-gray-600" />
+                            </div>
+                            <div class="mb-3 flex flex-col">
+                                <label for="date">Date::</label>
+                                <input v-model="form.date" type="date" id="date" :class="form.errors.date ? 'border-red-400' :''" class="block w-full border-gray-500 rounded-md focus:border-green-500 focus:ring-green-500 sm:text-sm dark:bg-gray-600" />
                             </div>
                             <div class="mb-3 flex flex-col">
                                 <label for="amount_paid">Amount Paid:</label>
                                 <input v-model="form.amount_paid" type="text" id="amount_paid" :class="form.errors.amount_paid ? 'border-red-400' :''" class="block w-full border-gray-500 rounded-md focus:border-green-500 focus:ring-green-500 sm:text-sm dark:bg-gray-600" />
                             </div>
-                            <div class="my-3">
+                            <div class="my-3 flex">
                                 <button class="bg-blue-700 text-white px-8 py-2 rounded border border-blue-300" type="submit">
                                     <font-awesome-icon icon="fa-solid fa-money-bill-1"></font-awesome-icon>
                                     Save Payment Entry
                                 </button>
                             </div>
                         </form>
+                        <div v-else class="py-8">
+                            <Link :href="'/loans/set-status/3/' + selectedPayee.activeLoan.id" method="post" class="bg-green-800 text-white px-8 py-4 rounded my-8">Complete Loan</Link>
+                        </div>
                     </div>
                 </div>
             </PageContent>
