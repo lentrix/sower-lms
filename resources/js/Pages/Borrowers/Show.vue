@@ -47,19 +47,9 @@ const money = Intl.NumberFormat('en-PH',{style: 'currency', currency:"php"})
        <PageContent>
             <div class="flex justify-between items-center">
                 <h3 class="text-3xl mb-3">Borrower Details</h3>
-                <div class="flex gap-2">
-                    <Link :href="'/borrowers/edit/' + props.borrower.id" class="px-3 py-1 rounded bg-indigo-500 text-white text-sm">
-                        <font-awesome-icon icon="fa-solid fa-edit"></font-awesome-icon>
-                        Edit Profile
-                    </Link>
-                    <Link href="#" class="px-3 py-1 rounded bg-red-900 text-white text-sm">
-                        <font-awesome-icon icon="fa-solid fa-file-pdf"></font-awesome-icon>
-                        Export
-                    </Link>
-                </div>
             </div>
             <div class="flex items-start gap-4">
-                <div class="w-2/7 px-4 py-2 rounded bg-green-100 dark:bg-green-800">
+                <div class="w-2/7 px-4 pt-2 pb-8 shadow border border-green-300 rounded bg-green-100 dark:bg-green-800">
                     <h4 class="text-2xl mb-2">Personal Information</h4>
                     <hr>
                     <table class="mt-3">
@@ -96,21 +86,31 @@ const money = Intl.NumberFormat('en-PH',{style: 'currency', currency:"php"})
                             </tr>
                         </tbody>
                     </table>
+                    <div class="mt-6">
+                        <Link :href="'/borrowers/edit/' + props.borrower.id" class="px-3 py-2 rounded bg-indigo-500 text-white text-sm">
+                            <font-awesome-icon icon="fa-solid fa-edit"></font-awesome-icon>
+                            Edit Profile
+                        </Link>
+                    </div>
                 </div>
-                <div class="flex-1 px-4 py-2 rounded bg-green-100 dark:bg-green-800">
+                <div class="flex-1 px-4 py-2 shadow border border-green-300 rounded bg-green-100 dark:bg-green-800">
                     <h4 class="text-2xl">Loan Summary</h4>
                     <hr>
                     <div v-if="borrower.activeLoan" class="flex flex-row gap-4">
                         <div>
                             <LoanTable :loan="borrower.activeLoan"></LoanTable>
-                            <div class="py-8 flex flex-col gap-2">
-                                <Link :href="'/loans/edit/' + borrower.activeLoan.id" class="px-8 py-2 rounded bg-indigo-700 text-white border border-indigo-500">
+                            <div class="pt-6 flex flex-col gap-2">
+                                <Link :href="'/loans/edit/' + borrower.activeLoan.id" class="px-8 py-1 rounded bg-indigo-700 text-white border border-indigo-500">
                                     <font-awesome-icon icon="fa-solid fa-edit"></font-awesome-icon>
                                     Edit Loan
                                 </Link>
-                                <Link :href="'/payments/payee/' + borrower.id" class="px-8 py-2 rounded bg-teal-700 text-white border border-indigo-500">
+                                <Link :href="'/payments/payee/' + borrower.id" class="px-8 py-1 rounded bg-teal-700 text-white border border-indigo-500">
                                     <font-awesome-icon icon="fa-solid fa-money-bill-1"></font-awesome-icon>
                                     Payment
+                                </Link>
+                                <Link :href="'/loans/resync/' + borrower.activeLoan.id" class="px-8 py-1 rounded bg-indigo-800 text-white border border-indigo-500">
+                                    <font-awesome-icon icon="fa-solid fa-arrows-rotate"></font-awesome-icon>
+                                    Re-sync Amortization
                                 </Link>
                             </div>
                         </div>

@@ -7,6 +7,7 @@ use App\Models\Loan;
 use App\Models\LoanPlan;
 use App\Models\LoanType;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class LoanController extends Controller
 {
@@ -119,5 +120,16 @@ class LoanController extends Controller
         ]);
 
         return redirect('/borrowers/' . $loan->borrower->id)->with('success','The loan has been updated.');
+    }
+
+    public function resyncAmortization(Loan $loan) {
+        DB::beginTransaction();
+        foreach($loan->paymentSchedules as $ps) {
+            $ps->amount_due = $ps->loan->amortization;
+            $ps->save();
+        }
+        DB::commit();
+
+        return redirect('/borrowers/' . $loan->borrower_id)->with('success','The amortizations has been resynced');
     }
 }

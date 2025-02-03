@@ -52,7 +52,7 @@ class BorrowerController extends Controller
 
         $borrower = Borrower::create($fields);
 
-        return redirect('/borrowers/' . $borrower->id)->with('info', 'New borrower created.');
+        return redirect('/loans/create/' . $borrower->id)->with('info', 'New borrower created.');
     }
 
     public function show(Borrower $borrower) {

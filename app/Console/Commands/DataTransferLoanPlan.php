@@ -35,13 +35,15 @@ class DataTransferLoanPlan extends Command
                     $firstRow = false; continue;
                 }
 
+
                 LoanPlan::create([
                     'id' => $row[0],
                     'month' => $row[1],
                     'loan_type_id' => $row[2],
                     'interest' => $row[3],
                     'penalty' => $row[4],
-                    'config' => $row[5]
+                    'config' => $row[5],
+                    'payment_schedules' => $row[1]
                 ]);
 
             }

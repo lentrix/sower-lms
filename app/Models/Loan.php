@@ -51,25 +51,27 @@ class Loan extends Model
 
     public function getAmortizationAttribute() {
 
+        if($this->loanPlan->payment_schedules==0) dd($this);
+
         //arawan
         if($this->loanPlan->month==2) {
             $int = $this->amount * (($this->loanPlan->interest/100) * 2);
             $totalPayable = $int + $this->amount;
 
-            return $totalPayable/56;
+            return $totalPayable/$this->loanPlan->payment_schedules;
         }
 
         //Weekly
         if($this->loanPlan->month==3) {
             $int = $this->amount * (($this->loanPlan->interest/100)*3);
             $totalPayable = $int + $this->amount;
-            return $totalPayable/12;
+            return $totalPayable/$this->loanPlan->payment_schedules;
         }
 
         //Bi-Monthly
-        $int = $this->amount * (($this->loanPlan->interest/100) * ($this->loanPlan->month/2));
+        $int = $this->amount * (($this->loanPlan->interest/100) * $this->loanPlan->month);
         $totalPayable = $int + $this->amount;
-        return $totalPayable / ($this->loanPlan->month);
+        return $totalPayable / $this->loanPlan->payment_schedules;
     }
 
     public function generatePaymentSchedules() {

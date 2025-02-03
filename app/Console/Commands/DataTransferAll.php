@@ -40,6 +40,8 @@ class DataTransferAll extends Command
         //payments
         $this->call('data-transfer:payment',['file'=>'payment_and_penalty.csv']);
 
+        //sync payment schedule amounts
+        $this->call('sync-payment-schedule-amount');
 
     }
 }
