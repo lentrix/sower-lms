@@ -12,9 +12,9 @@ const showingNavigationDropdown = ref(false);
 
 <template>
     <div>
-        <div class="min-h-screen bg-gray-200 dark:bg-gray-900">
+        <div class="min-h-screen bg-green-200 dark:bg-gray-900">
             <nav
-                class="border-b border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-800"
+                class="border-b border-gray-200 bg-gray-700 text-white dark:border-gray-700 dark:bg-gray-800"
             >
                 <!-- Primary Navigation Menu -->
                 <div class="mx-auto px-4 sm:px-6 lg:px-8">
@@ -23,15 +23,13 @@ const showingNavigationDropdown = ref(false);
                             <!-- Logo -->
                             <div class="flex shrink-0 items-center">
                                 <Link :href="route('dashboard')">
-                                    <ApplicationLogo
-                                        class="block h-9 w-auto fill-current text-gray-800 dark:text-gray-200"
-                                    />
+                                    <img src="/images/sower_logo.png" style="width: 50px" alt="">
                                 </Link>
                             </div>
 
                             <!-- Navigation Links -->
                             <div
-                                class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex"
+                                class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex nav-links"
                             >
                                 <NavLink :href="route('dashboard')" :active="$page.url.startsWith('/dashboard')">
                                     <font-awesome-icon icon="fa-solid fa-house"></font-awesome-icon>

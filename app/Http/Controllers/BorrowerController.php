@@ -28,7 +28,7 @@ class BorrowerController extends Controller
                 ->orWhere('address','like',"%$request->search%")
                 ->orderBy('last_name')
                 ->orderBy('first_name')
-                ->paginate(50);
+                ->get();
 
         return inertia('Borrowers/Index',[
             'borrowers' => $borrowers
@@ -61,7 +61,7 @@ class BorrowerController extends Controller
             'borrower' => $borrower,
             'payment_schedules'     => $borrower->activeLoan ? $borrower->activeLoan->paymentSchedules : [],
             'pending_loan'          => $borrower->getPendingLoan(),
-            'totalAmountDue'        => $borrower->activeLoan ? $borrower->activeLoan->amortization * $borrower->activeLoan->paymentSchedules->count() : 0,
+            'totalAmountDue'        => $borrower->activeLoan ? $borrower->activeLoan->totalLoanPayable : 0,
             'totalPenalty'          => $borrower->activeLoan ? Penalty::whereHas('paymentSchedule', function($q1) use ($borrower) {
                                             $q1->where('loan_id', $borrower->activeLoan->id);
                                         })->sum('amount') : 0,
@@ -70,7 +70,8 @@ class BorrowerController extends Controller
                                         })->sum('amount') : 0,
             'totalPenaltyPayment'   => $borrower->activeLoan ? PenaltyPayment::whereHas('payment', function($q1) use ($borrower) {
                                             $q1->where('loan_id', $borrower->activeLoan->id);
-                                        })->sum('amount') : 0
+                                        })->sum('amount') : 0,
+            'loanHistory'           => $borrower->loans->load('loanPlan')
         ]);
     }
 

@@ -19,7 +19,7 @@ Route::get('/dashboard', function () {
 Route::middleware('auth')->group(function () {
 
     Route::get('/borrowers/create',[BorrowerController::class, 'create'])->name('borrowers.create');
-    Route::post('/borrowers/search', [BorrowerController::class, 'search']);
+    Route::get('/borrowers/search', [BorrowerController::class, 'search']);
     Route::get('/borrowers/edit/{borrower}',[BorrowerController::class, 'edit'])->name('borrowers.edit');
     Route::get('/borrowers/{borrower}',[BorrowerController::class, 'show'])->name('borrowers.show');
     Route::put('/borrowers/{borrower}',[BorrowerController::class, 'update']);
@@ -32,6 +32,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/loans/set-status/{status}/{loan}', [LoanController::class, 'setStatus'])->name('loans.set-status');
     Route::get('/loans/edit/{loan}', [LoanController::class, 'edit'])->name('loans.edit');
     Route::get('/loans/resync/{loan}', [LoanController::class, 'resyncAmortization'])->name('loans.resync');
+    Route::get('/loans/sync-balance/{loan}', [LoanController::class, 'syncWithBalance'])->name('loans.sync-balance');
     Route::get('/loans/create/{borrower}', [LoanController::class, 'create'])->name('loans.create-with-borrower');
     Route::get('/loans/create', [LoanController::class, 'create'])->name('loans.create');
 

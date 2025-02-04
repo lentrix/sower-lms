@@ -7,6 +7,7 @@ use App\Models\Category;
 use App\Models\Loan;
 use App\Models\LoanPlan;
 use App\Models\LoanType;
+use App\Models\PaymentSchedule;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -121,5 +122,20 @@ class LoanController extends Controller
         DB::commit();
 
         return redirect('/borrowers/' . $loan->borrower_id)->with('success','The amortizations has been resynced');
+    }
+
+    public function syncWithBalance(Loan $loan) {
+
+        $syncablePaymentSchedules = PaymentSchedule::whereDoesntHave('loanPayments')
+            ->where('loan_id', $loan->id);
+
+        $newAmortization = $loan->balance / $syncablePaymentSchedules->count();
+
+        $syncablePaymentSchedules->update([
+            'amount_due' => $newAmortization
+        ]);
+
+        return redirect('/borrowers/' . $loan->borrower->id)->with('success','The remaining payment schedules have been synced with the balance.');
+
     }
 }

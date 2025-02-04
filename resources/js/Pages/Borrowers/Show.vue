@@ -14,7 +14,8 @@ const props = defineProps({
     totalAmountDue: null,
     totalPenalty: null,
     totalLoanPayment: null,
-    totalPenaltyPayment: null
+    totalPenaltyPayment: null,
+    loanHistory: null
 })
 
 const toast = useToast();
@@ -49,48 +50,70 @@ const money = Intl.NumberFormat('en-PH',{style: 'currency', currency:"php"})
                 <h3 class="text-3xl mb-3">Borrower Details</h3>
             </div>
             <div class="flex items-start gap-4">
-                <div class="w-2/7 px-4 pt-2 pb-8 shadow border border-green-300 rounded bg-green-100 dark:bg-green-800">
-                    <h4 class="text-2xl mb-2">Personal Information</h4>
-                    <hr>
-                    <table class="mt-3">
-                        <tbody>
-                            <tr>
-                                <th class="text-bold text-xl">Name:</th>
-                                <td class="text-xl">
-                                    {{ borrower.last_name }}, {{ borrower.first_name }} {{ borrower.middle_name }}
-                                </td>
-                            </tr>
-                            <tr>
-                                <th class="text-bold">Address:</th>
-                                <td>
-                                    {{ borrower.address }}
-                                </td>
-                            </tr>
-                            <tr>
-                                <th class="text-bold">Contact Number:</th>
-                                <td>
-                                    {{ borrower.contact_no }}
-                                </td>
-                            </tr>
-                            <tr>
-                                <th class="text-bold">Email Address:</th>
-                                <td>
-                                    {{ borrower.email }}
-                                </td>
-                            </tr>
-                            <tr>
-                                <th class="text-bold">Tax ID:</th>
-                                <td>
-                                    {{ borrower.tax_id }}
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    <div class="mt-6">
-                        <Link :href="'/borrowers/edit/' + props.borrower.id" class="px-3 py-2 rounded bg-indigo-500 text-white text-sm">
-                            <font-awesome-icon icon="fa-solid fa-edit"></font-awesome-icon>
-                            Edit Profile
-                        </Link>
+                <div class="4/9">
+                    <div class="px-4 pt-2 pb-8 shadow border border-green-300 rounded bg-green-100 dark:bg-green-800">
+                        <h4 class="text-2xl mb-2">Personal Information</h4>
+                        <hr>
+                        <table class="mt-3">
+                            <tbody>
+                                <tr>
+                                    <th class="text-bold text-xl">Name:</th>
+                                    <td class="text-xl">
+                                        {{ borrower.last_name }}, {{ borrower.first_name }} {{ borrower.middle_name }}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th class="text-bold">Address:</th>
+                                    <td>
+                                        {{ borrower.address }}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th class="text-bold">Contact Number:</th>
+                                    <td>
+                                        {{ borrower.contact_no }}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th class="text-bold">Email Address:</th>
+                                    <td>
+                                        {{ borrower.email }}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th class="text-bold">Tax ID:</th>
+                                    <td>
+                                        {{ borrower.tax_id }}
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div class="mt-6">
+                            <Link :href="'/borrowers/edit/' + props.borrower.id" class="px-3 py-2 rounded bg-indigo-500 text-white text-sm">
+                                <font-awesome-icon icon="fa-solid fa-edit"></font-awesome-icon>
+                                Edit Profile
+                            </Link>
+                        </div>
+                    </div>
+                    <div class="px-4 pt-2 pb-8 shadow border border-green-300 rounded bg-green-100 dark:bg-green-800 mt-4">
+                        <h4 class="text-2xl mb-2">Loan History</h4>
+                        <hr>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Plan</th>
+                                    <th class="text-right">Principal</th>
+                                    <th class="text-right">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="hist in loanHistory" :key="hist.id">
+                                    <td>{{ hist.loan_plan.planText }}</td>
+                                    <td class="text-right">{{ money.format(hist.amount) }}</td>
+                                    <td class="text-right">{{ hist.statusText }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
                 <div class="flex-1 px-4 py-2 shadow border border-green-300 rounded bg-green-100 dark:bg-green-800">
@@ -104,13 +127,17 @@ const money = Intl.NumberFormat('en-PH',{style: 'currency', currency:"php"})
                                     <font-awesome-icon icon="fa-solid fa-edit"></font-awesome-icon>
                                     Edit Loan
                                 </Link>
-                                <Link :href="'/payments/payee/' + borrower.id" class="px-8 py-1 rounded bg-teal-700 text-white border border-indigo-500">
+                                <Link :href="'/payments/payee/' + borrower.id" class="px-8 py-3 rounded bg-green-800 my-2 text-white shadow hover:bg-green-600">
                                     <font-awesome-icon icon="fa-solid fa-money-bill-1"></font-awesome-icon>
                                     Payment
                                 </Link>
                                 <Link :href="'/loans/resync/' + borrower.activeLoan.id" class="px-8 py-1 rounded bg-indigo-800 text-white border border-indigo-500">
                                     <font-awesome-icon icon="fa-solid fa-arrows-rotate"></font-awesome-icon>
                                     Re-sync Amortization
+                                </Link>
+                                <Link :href="'/loans/sync-balance/' + borrower.activeLoan.id" class="px-8 py-1 rounded bg-lime-800 text-white border border-indigo-500">
+                                    <font-awesome-icon icon="fa-solid fa-arrows-rotate"></font-awesome-icon>
+                                    Sync With Balance
                                 </Link>
                             </div>
                         </div>
@@ -204,6 +231,7 @@ tr {
 th {
     text-align: left;
     border-bottom: 1px solid rgb(60, 165, 60);
+    @apply py-2 px-3;
 }
 
 td {

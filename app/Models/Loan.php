@@ -10,7 +10,7 @@ class Loan extends Model
 {
     protected $guarded = [];
 
-    protected $appends = ['plan','formattedAmount','statusText','amortization'];
+    protected $appends = ['plan','formattedAmount','statusText','amortization','balance','totalLoanPayable'];
 
     public function borrower() {
         return $this->belongsTo(Borrower::class);
@@ -222,12 +222,17 @@ class Loan extends Model
         return $data;
     }
 
-    public function getBalance() {
-        $balance = 0;
-        foreach($this->paymentSchedules as $psched) {
-            $balance += ($psched->amount_due - $psched->loanPayments->sum('amount'));
-        }
-        return $balance;
+    public function getTotalLoanPayableAttribute() {
+        $interest = $this->amount * ($this->loanPlan->interest/100);
+        return $this->amount + $interest;
+    }
+
+    public function getBalanceAttribute() {
+        $totalLoanPayments = LoanPayment::whereHas('paymentSchedule', function($q) {
+            $q->where('loan_id', $this->id);
+        })->sum('amount');
+
+        return $this->totalLoanPayable-$totalLoanPayments;
     }
 
 }

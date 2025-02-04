@@ -3,7 +3,6 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import PageContent from '@/Components/PageContent.vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
 import { ref } from 'vue';
-import axios from 'axios';
 
 const props = defineProps({
     payees: Array,
@@ -124,12 +123,12 @@ const searchPayee = () => {
                         </table>
                         <form @submit.prevent="submitPayment" class="mx-2 my-3" v-if="balance>0">
                             <div class="mb-3 flex flex-col">
-                                <label for="or_number">O.R. Number:</label>
-                                <input v-model="form.or_number" ref="orno" type="text" id="or_number" :class="form.errors.or_number ? 'border-red-400' :''" class="block w-full border-gray-500 rounded-md focus:border-green-500 focus:ring-green-500 sm:text-sm dark:bg-gray-600" />
-                            </div>
-                            <div class="mb-3 flex flex-col">
                                 <label for="date">Date::</label>
                                 <input v-model="form.date" type="date" id="date" :class="form.errors.date ? 'border-red-400' :''" class="block w-full border-gray-500 rounded-md focus:border-green-500 focus:ring-green-500 sm:text-sm dark:bg-gray-600" />
+                            </div>
+                            <div class="mb-3 flex flex-col">
+                                <label for="or_number">O.R. Number:</label>
+                                <input v-model="form.or_number" ref="orno" type="text" id="or_number" :class="form.errors.or_number ? 'border-red-400' :''" class="block w-full border-gray-500 rounded-md focus:border-green-500 focus:ring-green-500 sm:text-sm dark:bg-gray-600" />
                             </div>
                             <div class="mb-3 flex flex-col">
                                 <label for="amount_paid">Amount Paid:</label>

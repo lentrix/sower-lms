@@ -46,16 +46,16 @@ watch(()=>form.category_id, (value, oldValue) => {
     <AuthenticatedLayout>
         <PageContent width="60">
             <h2 class="text-2xl mb-5">Create Loan</h2>
-            <div class="flex items-start gap-4">
+            <div class="flex items-start gap-8">
                 <div class="flex-1">
                     <h3 class="text-xl mb-3">Borrower Details</h3>
                     <hr>
-                    <div v-if="borrower" class="bg-green-400">
+                    <div v-if="borrower" class="bg-green-300 border border-green-400 shadow p-4 rounded">
                         <table class="mt-2">
                             <tbody>
                                 <tr><th>Name</th><td>{{ borrower.last_name }}, {{ borrower.first_name }}</td></tr>
                                 <tr><th>Address</th><td>{{ borrower.address }}</td></tr>
-                                <tr><th>Phone</th><td>{{ borrower.phone }}</td></tr>
+                                <tr><th>Phone</th><td>{{ borrower.contact_no }}</td></tr>
                                 <tr><th>Email Address</th><td>{{ borrower.email }}</td></tr>
                             </tbody>
                         </table>

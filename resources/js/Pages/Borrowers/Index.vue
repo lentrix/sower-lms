@@ -12,7 +12,7 @@ const searchForm = useForm({
 })
 
 const searchBorrower = () => {
-    searchForm.post('/borrowers/search')
+    searchForm.get('/borrowers/search')
 }
 
 </script>
@@ -37,7 +37,7 @@ const searchBorrower = () => {
             </div>
             <table class="w-full my-4">
                 <thead>
-                    <tr class="bg-green-900 text-white">
+                    <tr class="bg-gray-200 dark:bg-green-900 dark:text-white">
                         <th>Name</th>
                         <th>Address & Contacts</th>
                         <th>Active Loans</th>
@@ -45,7 +45,7 @@ const searchBorrower = () => {
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="b in borrowers.data" :key="b.id" class="even:bg-green-100 dark:even:bg-gray-900" >
+                    <tr v-for="b in borrowers" :key="b.id" class="even:bg-green-100 dark:even:bg-gray-900" >
                         <td>{{ b.last_name }}, {{ b.first_name }} {{ b.middle_name }}</td>
                         <td>
                             <div class="flex flex-col">
@@ -65,10 +65,16 @@ const searchBorrower = () => {
                         </td>
                         <td>
                             <div class="flex justify-center gap-2">
-                                <Link :href="'/borrowers/' + b.id" class="text-green-500">
+                                <Link :href="'/payments/payee/' + b.id" class="text-green-500 text-xl" v-if="b.activeLoan">
+                                    <font-awesome-icon icon="fa-solid fa-hand-holding-dollar" title="Record Loan Payment"></font-awesome-icon>
+                                </Link>
+                                <Link v-else :href="'/loans/create/' + b.id" class="text-green-500 text-xl">
+                                    <font-awesome-icon icon="fa-solid fa-file-invoice-dollar" title="Create Loan"></font-awesome-icon>
+                                </Link>
+                                <Link :href="'/borrowers/' + b.id" class="text-green-500 text-xl">
                                     <font-awesome-icon icon="fa-solid fa-eye" title="View Borrower Profile"></font-awesome-icon>
                                 </Link>
-                                <Link :href="'/borrowers/edit/' + b.id" class="text-green-500">
+                                <Link :href="'/borrowers/edit/' + b.id" class="text-green-500 text-xl">
                                     <font-awesome-icon icon="fa-solid fa-edit" title="Edit Borrower Profile"></font-awesome-icon>
                                 </Link>
                             </div>

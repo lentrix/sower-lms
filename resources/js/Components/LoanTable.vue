@@ -44,6 +44,14 @@ const formattedDate = (dateStr, monthFormat="long") => {
                 <td>{{ money.format(loan.amortization) }}</td>
             </tr>
             <tr>
+                <th>Total Payable</th>
+                <td>{{ money.format(loan.totalLoanPayable) }}</td>
+            </tr>
+            <tr>
+                <th>Balance</th>
+                <td>{{ money.format(loan.balance) }}</td>
+            </tr>
+            <tr>
                 <th>No. of Payments</th>
                 <td>{{ loan.loan_plan.payment_schedules }}</td>
             </tr>

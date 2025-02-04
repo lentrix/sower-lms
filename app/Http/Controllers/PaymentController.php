@@ -38,7 +38,7 @@ class PaymentController extends Controller
                 'total' => $borrower->activeLoan->getUnPaidPastDueSchedules()->sum('amount_due'),
                 'count' => $borrower->activeLoan->getUnPaidPastDueSchedules()->count()
             ],
-            'balance' => $borrower->activeLoan->getBalance()
+            'balance' => $borrower->activeLoan->balance
         ]);
     }
 
