@@ -9,7 +9,8 @@ const props = defineProps({
     payees: Array,
     selectedPayee: Object,
     payablePenalties: Object,
-    unPaidSchedules: Object
+    unPaidSchedules: Object,
+    balance: Number
 })
 
 const money = Intl.NumberFormat('en-PH',{style: 'currency', currency:"php"})
@@ -96,7 +97,7 @@ const searchPayee = () => {
                                 <tr>
                                     <th>Loan: </th>
                                     <td>
-                                        {{ selectedPayee.activeLoan.loan_plan.loan_type.name }}
+                                        {{ selectedPayee.activeLoan.loan_plan.categoryName }}
                                         {{ selectedPayee.activeLoan.loan_plan.planText }}
                                     </td>
                                 </tr>
@@ -105,11 +106,15 @@ const searchPayee = () => {
                                     <td>{{ money.format(selectedPayee.activeLoan.amount) }}</td>
                                 </tr>
                                 <tr>
-                                    <th>Loan Payable:</th>
+                                    <th>Due Payable:</th>
                                     <td>
                                         {{ money.format(unPaidSchedules.total) }}
                                         ({{ props.unPaidSchedules.count }} count{{ unPaidSchedules.count>1 ? 's' : '' }})
                                     </td>
+                                </tr>
+                                <tr>
+                                    <th>Balance:</th>
+                                    <td>{{ money.format(balance) }}</td>
                                 </tr>
                                 <tr>
                                     <th>Penalty Payable:</th>
@@ -117,7 +122,7 @@ const searchPayee = () => {
                                 </tr>
                             </tbody>
                         </table>
-                        <form @submit.prevent="submitPayment" class="mx-2 my-3" v-if="unPaidSchedules.total>0">
+                        <form @submit.prevent="submitPayment" class="mx-2 my-3" v-if="balance>0">
                             <div class="mb-3 flex flex-col">
                                 <label for="or_number">O.R. Number:</label>
                                 <input v-model="form.or_number" ref="orno" type="text" id="or_number" :class="form.errors.or_number ? 'border-red-400' :''" class="block w-full border-gray-500 rounded-md focus:border-green-500 focus:ring-green-500 sm:text-sm dark:bg-gray-600" />

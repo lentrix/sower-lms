@@ -24,7 +24,7 @@ const formattedDate = (dateStr, monthFormat="long") => {
             <tr>
                 <th>Category</th>
                 <td>
-                    {{ loan.plan.name }}
+                    {{ loan.loan_plan.categoryName }}
                 </td>
             </tr>
             <tr>
@@ -42,6 +42,10 @@ const formattedDate = (dateStr, monthFormat="long") => {
             <tr>
                 <th>Amortization</th>
                 <td>{{ money.format(loan.amortization) }}</td>
+            </tr>
+            <tr>
+                <th>No. of Payments</th>
+                <td>{{ loan.loan_plan.payment_schedules }}</td>
             </tr>
             <tr>
                 <th>Purpose</th>

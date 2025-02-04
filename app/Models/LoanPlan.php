@@ -8,21 +8,22 @@ class LoanPlan extends Model
 {
     protected $guarded = [];
 
-    protected $appends = ['planText'];
+    protected $appends = ['planText','categoryName'];
 
-    public function loanType() {
-        return $this->belongsTo(LoanType::class);
+    public function category() {
+        return $this->belongsTo(Category::class);
     }
 
     public function loan() {
         return $this->hasOne(Loan::class);
     }
 
-    public function getPlanTextAttribute() {
-        switch($this->month) {
-            case 2 : return "Arawan";
-            case 3 : return "Weekly";
-            default: return "Bi-Monthly (" . $this->month . " months)";
-        }
+    public function getCategoryNameAttribute() {
+        return $this->category->name;
     }
+
+    public function getPlanTextAttribute() {
+        return config('sower.plan_types.' . $this->plan_type);
+    }
+
 }

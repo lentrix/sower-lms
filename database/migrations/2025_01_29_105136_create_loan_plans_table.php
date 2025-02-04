@@ -14,15 +14,15 @@ return new class extends Migration
         Schema::create('loan_plans', function (Blueprint $table) {
             $table->id();
             $table->integer('month');
-            $table->
-            $table->bigInteger('loan_type_id')->unsigned();
+            $table->smallInteger('plan_type'); //1-Arawan, 2-Weekly, 3-Bi-Monthly
+            $table->bigInteger('category_id')->unsigned();
             $table->float('interest');
             $table->float('penalty');
             $table->string("config")->nullable();
             $table->integer('payment_schedules')->nullable();
             $table->timestamps();
 
-            $table->foreign('loan_type_id')->references('id')->on('loan_types');
+            $table->foreign('category_id')->references('id')->on('categories');
         });
     }
 

@@ -35,9 +35,10 @@ class PaymentController extends Controller
                 'count' => $borrower->activeLoan->payablePenalties->count()
             ],
             'unPaidSchedules' => [
-                'total' => $borrower->activeLoan->getUnPaidSchedules()->sum('amount_due'),
-                'count' => $borrower->activeLoan->getUnPaidSchedules()->count()
-            ]
+                'total' => $borrower->activeLoan->getUnPaidPastDueSchedules()->sum('amount_due'),
+                'count' => $borrower->activeLoan->getUnPaidPastDueSchedules()->count()
+            ],
+            'balance' => $borrower->activeLoan->getBalance()
         ]);
     }
 
@@ -78,20 +79,23 @@ class PaymentController extends Controller
                 $amountToPay-=$payAmount;
             }
 
-            foreach($unsettledLoan as $unL) {
-                if($amountToPay<=0) break;
+            foreach($loan->paymentSchedules as $psched) {
+                if($amountToPay==0) break;
 
-                $payAmount = $payAmount = $amountToPay >= $unL['balance'] ? $unL['balance'] : $amountToPay;
+                $balance = $psched->amount_due - $psched->loanPayments->sum('amount');
+                if($balance == 0) continue;
+
+                $payAmount = $amountToPay>$balance ? $balance : $amountToPay;
 
                 LoanPayment::create([
                     'payment_id' => $pmt->id,
-                    'payment_schedule_id' => $unL['paymentSchedule']->id,
+                    'payment_schedule_id' => $psched->id,
                     'amount' => $payAmount,
                     'interest' => 0,
                     'principal' => 0
                 ]);
 
-                $amountToPay-=$payAmount;
+                $amountToPay -= $payAmount;
             }
 
             DB::commit();

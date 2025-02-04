@@ -3,13 +3,13 @@ import PageContent from '@/Components/PageContent.vue';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head } from '@inertiajs/vue3';
 import { useForm } from '@inertiajs/vue3';
+import { ref, watch } from 'vue';
 
 
 const props = defineProps({
     borrower: Object,
-    loan_types: Array,
     loan_plans: Object,
-    interest_rates: Object
+    categories: Object
 })
 
 const form = useForm({
@@ -17,19 +17,26 @@ const form = useForm({
     borrower_id: props.borrower.id,
     purpose: '',
     amount: '',
-    transaction_fee: '',
+    transaction_fee: '100',
     released_at: '',
     plan: {
+        plan_type:'',
         month: '',
         penalty: '',
         payment_schedules: '',
     },
-    interest_rate: ''
+    category_id: ''
 })
 
 const submit = () => {
     form.post('/loans/')
 }
+
+const selectedCategory = ref(null)
+
+watch(()=>form.category_id, (value, oldValue) => {
+    selectedCategory.value = props.categories.filter((cat)=>cat.id==value)[0];
+})
 
 </script>
 
@@ -67,23 +74,23 @@ const submit = () => {
 
                         <div class="flex gap-4">
                             <div class="flex-1 mb-4">
-                                <label for="interest_rate" class="block text-sm text-gray-600 font-medium dark:text-gray-400">Category:</label>
-                                <select id="interest_rate" v-model="form.interest_rate" :class="form.errors.interest_rate ? 'border-red-400' :''" class="block w-full border-gray-500 rounded-md focus:border-green-500 focus:ring-green-500 sm:text-sm dark:bg-gray-600">
-                                    <option v-for="rate, category in interest_rates" :key="category" :value="rate">
-                                        {{ category }}
+                                <label for="category_id" class="block text-sm text-gray-600 font-medium dark:text-gray-400">Category: {{ form.category_id }}</label>
+                                <select id="category_id" v-model="form.category_id" :class="form.errors.category_id ? 'border-red-400' :''" class="block w-full border-gray-500 rounded-md focus:border-green-500 focus:ring-green-500 sm:text-sm dark:bg-gray-600">
+                                    <option v-for="category in categories" :key="category.id" :value="category.id">
+                                        {{ category.name }}
                                     </option>
                                 </select>
                                 <!-- <input v-model="form.interest_rate" type="text" id="interest_rate" :class="form.errors.interest_rate ? 'border-red-400' :''" class="block w-full border-gray-500 rounded-md focus:border-green-500 focus:ring-green-500 sm:text-sm dark:bg-gray-600" /> -->
-                                <i v-if="form.errors.interest_rate" class="text-red-600 text-sm">{{ form.errors.interest_rate }}</i>
+                                <i v-if="form.errors.category_id" class="text-red-600 text-sm">{{ form.errors.category_id }}</i>
                             </div>
                             <div class="flex-1">
                                 <label class="block text-sm text-gray-600 font-medium dark:text-gray-400">Interest Rate:</label>
-                                <div>{{ (form.interest_rate) }}%</div>
+                                <div>{{ (selectedCategory?.interest_rate) }}%</div>
                             </div>
                         </div>
 
                         <div class="mb-4">
-                            <label for="loan_plan" class="block text-sm text-gray-600 font-medium dark:text-gray-400">Loan Plan:</label>
+                            <label for="loan_plan" class="block text-sm text-gray-600 font-medium dark:text-gray-400">Loan Plan: {{ form.plan.plan_type }}</label>
                             <select id="loan_plan" v-model="form.plan" :class="form.errors.loan_plan ? 'border-red-400' :''" class="block w-full border-gray-500 rounded-md focus:border-green-500 focus:ring-green-500 sm:text-sm dark:bg-gray-600">
                                 <option v-for="plan, name in loan_plans" :key="plan" :value="plan">
                                     {{ name }}

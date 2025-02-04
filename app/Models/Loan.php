@@ -165,13 +165,23 @@ class Loan extends Model
         ->get();
     }
 
+    //All unpaide dues regardless of due date
     public function getUnPaidSchedules() {
         return PaymentSchedule::whereDoesntHave('loanPayments')
-            ->where('due_date','<',Carbon::now())
             ->where('loan_id', $this->id)
             ->get();
     }
 
+    //All unpaid past dues
+    public function getUnPaidPastDueSchedules() {
+        return PaymentSchedule::whereDoesntHave('loanPayments')
+            ->where('due_date','<',Carbon::now()->addDay())
+            ->where('loan_id', $this->id)
+            ->get();
+    }
+
+
+    //Payment schedules that are past due without or lacking payment
     public function getUnsettledPaymentSchedules() {
         $pscheds = PaymentSchedule::where('loan_id', $this->id)
             ->where('due_date','<=', Carbon::now()->addDay())
@@ -210,6 +220,14 @@ class Loan extends Model
         }
 
         return $data;
+    }
+
+    public function getBalance() {
+        $balance = 0;
+        foreach($this->paymentSchedules as $psched) {
+            $balance += ($psched->amount_due - $psched->loanPayments->sum('amount'));
+        }
+        return $balance;
     }
 
 }

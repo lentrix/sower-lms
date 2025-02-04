@@ -11,10 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('loan_types', function (Blueprint $table) {
+        Schema::create('categories', function (Blueprint $table) {
             $table->id();
             $table->string('name',50);
             $table->string('description');
+            $table->smallInteger('interest_rate');
             $table->timestamps();
         });
     }

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Borrower;
+use App\Models\Category;
 use App\Models\Loan;
 use App\Models\LoanPlan;
 use App\Models\LoanType;
@@ -18,16 +19,15 @@ class LoanController extends Controller
     public function create(Borrower $borrower=null) {
         return inertia('Loans/Create', [
             'borrower' => $borrower,
-            'loan_types' => LoanType::orderBy('name')->get(),
+            'categories' => Category::orderBy('name')->get(),
             'loan_plans' => config('sower.loan_plans'),
-            'interest_rates' => config('sower.interest_rates')
         ]);
     }
 
     public function store(Request $request) {
         $request->validate([
             'ref_no' => 'string|required',
-            'interest_rate' => 'numeric|required',
+            'category_id' => 'numeric|required',
             'plan' => 'required',
             'amount' => 'numeric|required',
             'transaction_fee'=>'numeric|required',
@@ -35,31 +35,27 @@ class LoanController extends Controller
 
         // dd($request->all());
 
-        $loanTypeId = null;
-        switch($request->interest_rate) {
-            case 3 : $loanTypeId = 1; break;
-            case 6 : $loanTypeId = 2; break;
-            case 4 : $loanTypeId = 3; break;
-        }
+        $category = Category::findOrFail($request->category_id);
 
         $amount = str_replace(",","", $request->amount);
         $month = $request->plan['month'];
         $paymentScheds = $request->plan['payment_schedules'];
 
-        $intRate = $request->interest_rate/100;
-        $interest = $amount * ($intRate*$month);
+        // $intRate = $category->interest_rate/100;
+        // $interest = $amount * ($intRate*$month);
 
-        $payable = $amount + $interest;
+        // $payable = $amount + $interest;
 
         $plan = LoanPlan::create([
             'month' => $request->plan['month'],
-            'loan_type_id' => $loanTypeId,
-            'interest' => $request->interest_rate,
+            'category_id' => $category->id,
+            'interest' => $category->interest_rate,
             'penalty' => $request->plan['penalty'],
-            'payment_schedules' => $paymentScheds
+            'payment_schedules' => $paymentScheds,
+            'plan_type' => $request->plan['plan_type']
         ]);
 
-        $loan = Loan::create([
+        Loan::create([
             'ref_no'            => $request->ref_no,
             'loan_plan_id'      => $plan->id,
             'borrower_id'       => $request->borrower_id,
@@ -87,34 +83,28 @@ class LoanController extends Controller
         return inertia('Loans/Edit', [
             'loan' => $loan,
             'borrower' => $loan->borrower,
-            'loan_types' => LoanType::orderBy('name')->get(),
-            'loan_plans' => config('sower.loan_plans'),
-            'interest_rates' => config('sower.interest_rates')
+            'categories' => Category::orderBy('name')->get(),
+            'loan_plans' => config('sower.loan_plans')
         ]);
     }
 
     public function update(Loan $loan, Request $request) {
         $request->validate([
             'ref_no' => 'string|required',
-            'interest_rate' => 'numeric|required',
+            'category_id' => 'numeric|required',
             'plan' => 'required',
             'amount' => 'numeric|required',
             'transaction_fee'=>'numeric|required',
         ]);
 
-        $loanTypeId = null;
-        switch($request->interest_rate) {
-            case 3 : $loanTypeId = 1; break;
-            case 6 : $loanTypeId = 2; break;
-            case 4 : $loanTypeId = 3; break;
-        }
-
         $loan->update($request->only('ref_no','purpose','amount','transaction_fee'));
+
+        $category = Category::findOrFail($request->category_id);
 
         $loan->loanPlan->update([
             'month' => $request->plan['month'],
-            'loan_type_id' => $loanTypeId,
-            'interest' => $request->interest_rate,
+            'category_id' => $request->category_id,
+            'interest' => $category->interest_rate,
             'penalty' => $request->plan['penalty'],
             'payment_schedules' => $request->plan['payment_schedules']
         ]);

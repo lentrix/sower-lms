@@ -55,7 +55,7 @@ const searchBorrower = () => {
                         </td>
                         <td>
                             <div v-if="b.activeLoan" class="flex flex-col">
-                                <div>Category: {{ b.activeLoan.plan.name }}</div>
+                                <div>Category: {{ b.activeLoan.loan_plan.categoryName }}</div>
                                 <div>Plan: {{ b.activeLoan.loan_plan.planText }}</div>
                                 <div>Amount: ₱ {{ b.activeLoan.formattedAmount }}</div>
                             </div>
