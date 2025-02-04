@@ -120,22 +120,30 @@ const money = Intl.NumberFormat('en-PH',{style: 'currency', currency:"php"})
                                 <thead>
                                     <tr>
                                         <th>Due Date</th>
-                                        <th>Amount Due</th>
-                                        <th>Penalty</th>
-                                        <th>Loan Payment</th>
-                                        <th>Penalty Payment</th>
-                                        <th>Total Payment</th>
+                                        <th class="text-right">Amount Due</th>
+                                        <th class="text-right">Penalty</th>
+                                        <th class="text-right">Loan Payment</th>
+                                        <th class="text-right">Penalty Payment</th>
+                                        <th class="text-right">Total Payment</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <tr v-for="psched in payment_schedules" :key="psched.id">
                                         <td>{{ formattedDate(psched.due_date,"short") }}</td>
                                         <td class="text-right">{{ money.format(psched.amount_due) }}</td>
-                                        <td class="text-right text-red-700">{{ money.format(psched.penaltyAmount) }}</td>
-                                        <td class="text-right">
-                                            {{ money.format(psched.totalPayments) }}
+                                        <td class="text-right text-red-700">
+                                            <template v-if="psched.penaltyAmount>0">
+                                                {{ money.format(psched.penaltyAmount) }}
+                                            </template>
                                         </td>
-                                        <td class="text-right">{{ money.format(psched.penaltyPayment) }}</td>
+                                        <td class="text-right">
+                                            <template v-if="psched.totalPayments>0">{{ money.format(psched.totalPayments) }}</template>
+                                        </td>
+                                        <td class="text-right">
+                                            <template v-if="psched.penaltyPayment>0">
+                                                {{ money.format(psched.penaltyPayment) }}
+                                            </template>
+                                        </td>
                                         <td class="text-right">
                                             {{ money.format(psched.penaltyPayment+psched.totalPayments) }}
                                         </td>

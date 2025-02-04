@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('loan_plans', function (Blueprint $table) {
             $table->id();
             $table->integer('month');
+            $table->
             $table->bigInteger('loan_type_id')->unsigned();
             $table->float('interest');
             $table->float('penalty');
