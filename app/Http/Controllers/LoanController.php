@@ -125,6 +125,12 @@ class LoanController extends Controller
     }
 
     public function syncWithBalance(Loan $loan) {
+        $paidPaymentSchedules = PaymentSchedule::where('loan_id', $loan->id)
+                ->whereHas('loanPayments')->get();
+
+        foreach($paidPaymentSchedules as $pps) {
+            $pps->update(['amount_due'=>$pps->loanPayments->sum('amount')]);
+        }
 
         $syncablePaymentSchedules = PaymentSchedule::whereDoesntHave('loanPayments')
             ->where('loan_id', $loan->id);

@@ -224,7 +224,7 @@ class Loan extends Model
 
     public function getTotalLoanPayableAttribute() {
         $interest = $this->amount * ($this->loanPlan->interest/100);
-        return $this->amount + $interest;
+        return $this->amount + ($interest*$this->loanPlan->month);
     }
 
     public function getBalanceAttribute() {
