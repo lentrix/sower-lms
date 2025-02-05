@@ -22,6 +22,10 @@ class BorrowerController extends Controller
     }
 
     public function search(Request $request) {
+        $request->validate([
+            'search' => 'required|min:3'
+        ]);
+
         $borrowers = Borrower::where('last_name','like',"%$request->search%")
                 ->orWhere('first_name','like',"%$request->search%")
                 ->orWhere('middle_name','like',"%$request->search%")

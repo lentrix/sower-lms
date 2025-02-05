@@ -39,10 +39,10 @@ const showingNavigationDropdown = ref(false);
                                     <font-awesome-icon icon="fa-solid fa-users"></font-awesome-icon>
                                     &nbsp;Borrowers
                                 </NavLink>
-                                <NavLink :href="route('loans')" :active="$page.url.startsWith('/loans')">
+                                <!-- <NavLink :href="route('loans')" :active="$page.url.startsWith('/loans')">
                                     <font-awesome-icon icon="fa-solid fa-money-bill-1"></font-awesome-icon>
                                     &nbsp;Loans
-                                </NavLink>
+                                </NavLink> -->
                                 <NavLink :href="route('payments')" :active="$page.url.startsWith('/payments')">
                                     <font-awesome-icon icon="fa-solid fa-coins"></font-awesome-icon>
                                     &nbsp;Payments

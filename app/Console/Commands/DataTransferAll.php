@@ -42,7 +42,7 @@ class DataTransferAll extends Command
         $this->call('data-transfer:payment',['file'=>'payment_and_penalty.csv']);
 
         //sync payment schedule amounts
-        $this->call('sync-payment-schedule-amount');
+        // $this->call('sync-payment-schedule-amount');
 
         //Corrective measures...
         DB::table('loan_plans')->where('payment_schedules', 56)->update(['month'=>2, 'plan_type'=>1]);

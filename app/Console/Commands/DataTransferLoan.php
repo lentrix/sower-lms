@@ -45,7 +45,7 @@ class DataTransferLoan extends Command
                     $first=false; continue;
                 }
                 try {
-                    Loan::create([
+                    $loan = Loan::create([
                         'id' => $row[0],
                         'ref_no' => $row[1],
                         'loan_plan_id' => $row[6],
@@ -57,6 +57,7 @@ class DataTransferLoan extends Command
                         'released_at' => $row[9],
                         'created_at' => $row[10]
                     ]);
+
                 }catch(Exception $ex) {
                     $this->error("Cannot create loan: " . $ex->getMessage());
                     fwrite($log, $ex->getMessage() . "\n\n");

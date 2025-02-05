@@ -45,11 +45,13 @@ class DataTransferPaymentSchedule extends Command
                     $first=false; continue;
                 }
                 try {
-                    PaymentSchedule::create([
+                    $pms = PaymentSchedule::create([
                         'id' => $row[0],
                         'loan_id' => $row[1],
                         'due_date' => $row[2]
                     ]);
+                    $pms->amount_due = $pms->loan->amortization;
+                    $pms->save();
                 }catch(Exception $ex) {
                     $this->error("Cannot create payment schedule: " . $ex->getMessage());
                     fwrite($log, $ex->getMessage() . "\n\n");

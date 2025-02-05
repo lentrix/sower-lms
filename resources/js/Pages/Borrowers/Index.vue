@@ -1,10 +1,13 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import PageContent from '@/Components/PageContent.vue';
-import { Head, Link, useForm } from '@inertiajs/vue3';
+import { Head, Link, useForm, usePage } from '@inertiajs/vue3';
+
+const page = usePage()
 
 const props = defineProps({
-    borrowers: null
+    borrowers: null,
+    errors: Object
 })
 
 const searchForm = useForm({
@@ -33,6 +36,7 @@ const searchBorrower = () => {
                 </div>
                 <form @submit.prevent="searchBorrower">
                     <input type="text" v-model="searchForm.search" class="py rounded border-gray-300 dark:bg-gray-600" placeholder="Search...">
+                    <div v-if="errors" class="text-xs text-red-600 italic">{{ errors.search }}</div>
                 </form>
             </div>
             <table class="w-full my-4">
