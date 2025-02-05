@@ -19,13 +19,31 @@ class PaymentController extends Controller
                 ->where('loans.status','=',2)
                 ->select('borrowers.id', 'last_name','first_name','middle_name')->get();
 
+        $payments = Payment::orderBy('date','DESC')->limit(20)->get()->map(function($pmt) {
+            return [
+                'date' => $pmt->date->format('M d, Y'),
+                'orno' => $pmt->or_number,
+                'payee' => $pmt->loan->borrower->last_name . ", " . $pmt->loan->borrower->first_name,
+                'amount' => $pmt->amount
+            ];
+        });
+
         return inertia('Payments/Index',[
             'payees' => $payees,
+            'payments' => $payments
         ]);
     }
 
     public function pay(Borrower $borrower) {
         $payees = DB::table('borrowers')->select('id', 'last_name','first_name','middle_name')->get();
+        $payments = Payment::orderBy('date','DESC')->limit(20)->get()->map(function($pmt) {
+            return [
+                'date' => $pmt->date->format('M d, Y'),
+                'orno' => $pmt->or_number,
+                'payee' => $pmt->loan->borrower->last_name . ", " . $pmt->loan->borrower->first_name,
+                'amount' => $pmt->amount
+            ];
+        });
 
         return inertia('Payments/Index',[
             'payees' => $payees,
@@ -38,7 +56,8 @@ class PaymentController extends Controller
                 'total' => $borrower->activeLoan->getUnPaidPastDueSchedules()->sum('amount_due'),
                 'count' => $borrower->activeLoan->getUnPaidPastDueSchedules()->count()
             ],
-            'balance' => $borrower->activeLoan->balance
+            'balance' => $borrower->activeLoan->balance,
+            'payments' => $payments
         ]);
     }
 

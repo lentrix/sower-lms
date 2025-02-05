@@ -9,7 +9,8 @@ const props = defineProps({
     selectedPayee: Object,
     payablePenalties: Object,
     unPaidSchedules: Object,
-    balance: Number
+    balance: Number,
+    payments: Array
 })
 
 const money = Intl.NumberFormat('en-PH',{style: 'currency', currency:"php"})
@@ -156,9 +157,17 @@ const searchPayee = () => {
                             <th>Date</th>
                             <th>OR Number</th>
                             <th>Payee</th>
-                            <th>Amount</th>
+                            <th class="text-right">Amount</th>
                         </tr>
                     </thead>
+                    <tbody>
+                        <tr v-for="payment in payments" :key="payment.id">
+                            <td>{{ payment.date }}</td>
+                            <td>{{ payment.orno }}</td>
+                            <td>{{ payment.payee }}</td>
+                            <td class="text-right">{{ money.format(payment.amount) }}</td>
+                        </tr>
+                    </tbody>
                 </table>
             </PageContent>
        </div>

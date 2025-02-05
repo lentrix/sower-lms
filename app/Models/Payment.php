@@ -8,6 +8,13 @@ class Payment extends Model
 {
     protected $guarded = [];
 
+    protected function casts(): array
+    {
+        return [
+            'date' => 'datetime',
+        ];
+    }
+
     public function loan() {
         return $this->belongsTo(Loan::class);
     }
