@@ -48,6 +48,24 @@ const money = Intl.NumberFormat('en-PH',{style: 'currency', currency:"php"})
        <PageContent>
             <div class="flex justify-between items-center">
                 <h3 class="text-3xl mb-3">Borrower Details</h3>
+                <div class="pt-6 flex justify-start items-start gap-2 mb-3" v-if="borrower.activeLoan">
+                    <Link :href="'/loans/edit/' + borrower.activeLoan.id" class="px-8 py-1 rounded bg-indigo-700 text-white border border-indigo-500">
+                        <font-awesome-icon icon="fa-solid fa-edit"></font-awesome-icon>
+                        Edit Loan
+                    </Link>
+                    <Link :href="'/payments/payee/' + borrower.id" class="px-8 py-1 rounded bg-green-800 text-white shadow hover:bg-green-600 dark:bg-green-400 dark:text-green-900">
+                        <font-awesome-icon icon="fa-solid fa-money-bill-1"></font-awesome-icon>
+                        Payment
+                    </Link>
+                    <Link :href="'/loans/resync/' + borrower.activeLoan.id" class="px-8 py-1 rounded bg-indigo-800 text-white border border-indigo-500">
+                        <font-awesome-icon icon="fa-solid fa-arrows-rotate"></font-awesome-icon>
+                        Sync Amortization
+                    </Link>
+                    <Link :href="'/loans/sync-balance/' + borrower.activeLoan.id" class="px-8 py-1 rounded bg-lime-800 text-white border border-indigo-500">
+                        <font-awesome-icon icon="fa-solid fa-arrows-rotate"></font-awesome-icon>
+                        Sync Balance
+                    </Link>
+                </div>
             </div>
             <div class="flex items-start gap-4">
                 <div class="4/9">
@@ -122,24 +140,6 @@ const money = Intl.NumberFormat('en-PH',{style: 'currency', currency:"php"})
                     <div v-if="borrower.activeLoan" class="flex flex-row gap-4">
                         <div>
                             <LoanTable :loan="borrower.activeLoan"></LoanTable>
-                            <div class="pt-6 flex flex-col gap-2">
-                                <Link :href="'/loans/edit/' + borrower.activeLoan.id" class="px-8 py-1 rounded bg-indigo-700 text-white border border-indigo-500">
-                                    <font-awesome-icon icon="fa-solid fa-edit"></font-awesome-icon>
-                                    Edit Loan
-                                </Link>
-                                <Link :href="'/payments/payee/' + borrower.id" class="px-8 py-3 rounded bg-green-800 my-2 text-white shadow hover:bg-green-600 dark:bg-green-400 dark:text-green-900">
-                                    <font-awesome-icon icon="fa-solid fa-money-bill-1"></font-awesome-icon>
-                                    Payment
-                                </Link>
-                                <Link :href="'/loans/resync/' + borrower.activeLoan.id" class="px-8 py-1 rounded bg-indigo-800 text-white border border-indigo-500">
-                                    <font-awesome-icon icon="fa-solid fa-arrows-rotate"></font-awesome-icon>
-                                    Re-sync Amortization
-                                </Link>
-                                <Link :href="'/loans/sync-balance/' + borrower.activeLoan.id" class="px-8 py-1 rounded bg-lime-800 text-white border border-indigo-500">
-                                    <font-awesome-icon icon="fa-solid fa-arrows-rotate"></font-awesome-icon>
-                                    Sync With Balance
-                                </Link>
-                            </div>
                         </div>
                         <div class="flex-1">
                                 <h5 class="text-xl">Payment Schedule</h5>
