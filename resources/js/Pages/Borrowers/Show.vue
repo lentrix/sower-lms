@@ -127,7 +127,7 @@ const money = Intl.NumberFormat('en-PH',{style: 'currency', currency:"php"})
                                     <font-awesome-icon icon="fa-solid fa-edit"></font-awesome-icon>
                                     Edit Loan
                                 </Link>
-                                <Link :href="'/payments/payee/' + borrower.id" class="px-8 py-3 rounded bg-green-800 my-2 text-white shadow hover:bg-green-600">
+                                <Link :href="'/payments/payee/' + borrower.id" class="px-8 py-3 rounded bg-green-800 my-2 text-white shadow hover:bg-green-600 dark:bg-green-400 dark:text-green-900">
                                     <font-awesome-icon icon="fa-solid fa-money-bill-1"></font-awesome-icon>
                                     Payment
                                 </Link>

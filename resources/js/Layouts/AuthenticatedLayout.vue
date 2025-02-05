@@ -51,6 +51,10 @@ const showingNavigationDropdown = ref(false);
                                     <font-awesome-icon icon="fa-solid fa-coins"></font-awesome-icon>
                                     &nbsp;Reports
                                 </NavLink>
+                                <NavLink :href="route('users')" :active="$page.url.startsWith('/users')">
+                                    <font-awesome-icon icon="fa-solid fa-people-group"></font-awesome-icon>
+                                    &nbsp;Users
+                                </NavLink>
                             </div>
                         </div>
 

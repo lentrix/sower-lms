@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\DB;
 
 class DataTransferAll extends Command
 {
@@ -42,6 +43,9 @@ class DataTransferAll extends Command
 
         //sync payment schedule amounts
         $this->call('sync-payment-schedule-amount');
+
+        //Corrective measures...
+        DB::table('loan_plans')->where('payment_schedules', 56)->update(['month'=>2, 'plan_type'=>1]);
 
     }
 }
