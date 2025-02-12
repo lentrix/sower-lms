@@ -54,7 +54,7 @@ watch(()=>form.category_id, (value, oldValue) => {
                         <table class="mt-2">
                             <tbody>
                                 <tr><th>Name</th><td>{{ borrower.last_name }}, {{ borrower.first_name }}</td></tr>
-                                <tr><th>Address</th><td>{{ borrower.address }}</td></tr>
+                                <tr><th>Address</th><td>{{ borrower.barangay }}, {{ borrower.town }}, {{ borrower.province }}</td></tr>
                                 <tr><th>Phone</th><td>{{ borrower.contact_no }}</td></tr>
                                 <tr><th>Email Address</th><td>{{ borrower.email }}</td></tr>
                             </tbody>

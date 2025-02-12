@@ -17,9 +17,12 @@ return new class extends Migration
             $table->string('middle_name')->nullable();
             $table->string('last_name');
             $table->string('contact_no');
-            $table->string('address');
-            $table->string('email');
-            $table->string('tax_id');
+            // $table->string('address');
+            $table->string('barangay',50)->nullable();
+            $table->string('town',50)->nullable();
+            $table->string('province',50)->nullable();
+            $table->string('email')->nullable();
+            $table->string('tax_id')->nullable();
             $table->timestamps();
         });
     }

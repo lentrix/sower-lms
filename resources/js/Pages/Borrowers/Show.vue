@@ -83,7 +83,7 @@ const money = Intl.NumberFormat('en-PH',{style: 'currency', currency:"php"})
                                 <tr>
                                     <th class="text-bold">Address:</th>
                                     <td>
-                                        {{ borrower.address }}
+                                        {{ borrower.barangay }}, {{ borrower.town }}, {{ borrower.province }}
                                     </td>
                                 </tr>
                                 <tr>

@@ -30,7 +30,7 @@ class BorrowerController extends Controller
                     'last_name' => $q->borrower->last_name,
                     'first_name' => $q->borrower->first_name,
                     'address' => $q->borrower->address,
-                    'phone' => $q->borrower->phone,
+                    'contact_no' => $q->borrower->contact_no,
                     'activeLoan' => $q,
                 ];
             });
@@ -49,10 +49,18 @@ class BorrowerController extends Controller
         $borrowers = Borrower::where('last_name','like',"%$request->search%")
                 ->orWhere('first_name','like',"%$request->search%")
                 ->orWhere('middle_name','like',"%$request->search%")
-                ->orWhere('address','like',"%$request->search%")
                 ->orderBy('last_name')
                 ->orderBy('first_name')
-                ->get();
+                ->get()->map(function($q) {
+                    return [
+                        'id' => $q->id,
+                        'last_name' => $q->last_name,
+                        'first_name' => $q->first_name,
+                        'address' => $q->address,
+                        'contact_no' => $q->contact_no,
+                        'activeLoan' => $q->activeLoan,
+                    ];
+                });
 
         return inertia('Borrowers/Index',[
             'borrowers' => $borrowers
@@ -69,7 +77,9 @@ class BorrowerController extends Controller
             'first_name' => 'required|string',
             'last_name' => 'required|string',
             'middle_name' => 'required|string',
-            'address' => 'required|string',
+            'barangay' => 'required|string',
+            'town' => 'required|string',
+            'province' => 'required|string',
             'contact_no' => 'required|string',
             'tax_id' => 'string',
             'email' => 'required|email',
@@ -111,7 +121,9 @@ class BorrowerController extends Controller
             'first_name' => 'required|string',
             'last_name' => 'required|string',
             'middle_name' => 'required|string',
-            'address' => 'required|string',
+            'barangay' => 'required|string',
+            'town' => 'required|string',
+            'province' => 'required|string',
             'contact_no' => 'required|string',
             'tax_id' => 'string',
             'email' => 'required|email',

@@ -29,4 +29,8 @@ class Borrower extends Model
             ->where('borrower_id', $this->id)
             ->first();
     }
+
+    public function getAddressAttribute() {
+        return "$this->barangay, $this->town, $this->province";
+    }
 }

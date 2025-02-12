@@ -44,13 +44,19 @@ class DataTransferBorrower extends Command
                     $isFirst = true;
                     continue;
                 }
+
+                $addr = explode(",", $row[5]);
+
                 $borrower = Borrower::create([
                     'id' => $row[0],
                     'first_name' => $row[1],
                     'middle_name' => $row[2],
                     'last_name' => $row[3],
                     'contact_no' => $row[4],
-                    'address' => $row[5],
+                    // 'address' => $row[5],
+                    'barangay' => $addr[0],
+                    'town' => isset($addr[1]) ? $addr[1] : '',
+                    'province' => isset($addr[2]) ? $addr[2] : '',
                     'email' => $row[6],
                     'tax_id' => $row[7],
                 ]);

@@ -8,7 +8,9 @@ const form = useForm({
     first_name: '',
     middle_name: '',
     last_name: '',
-    address: '',
+    barangay: '',
+    town: '',
+    province: '',
     contact_no: '',
     email: '',
     tax_id: '',
@@ -69,10 +71,22 @@ const submit = () => {
                         </div>
                     </div>
 
-                    <div class="mb-4">
-                        <label for="address" class="block text-sm text-gray-600 font-medium dark:text-gray-400">Address</label>
-                        <input v-model="form.address" type="text" id="address" class="block w-full border-gray-500 rounded-md focus:border-green-500 focus:ring-green-500 sm:text-sm dark:bg-gray-600" />
-                        <i v-if="form.errors.address" class="text-red-600 text-sm">{{ form.errors.address }}</i>
+                    <div class="flex gap-3 mb-3">
+                        <div class="flex-1">
+                            <label for="barangay" class="block text-sm text-gray-600 font-medium dark:text-gray-400">Barangay</label>
+                            <input v-model="form.barangay" type="text" id="barangay" class="block w-full border-gray-500 rounded-md focus:border-green-500 focus:ring-green-500 sm:text-sm dark:bg-gray-600" />
+                            <i v-if="form.errors.barangay" class="text-red-600 text-sm">{{ form.errors.barangay }}</i>
+                        </div>
+                        <div class="flex-1">
+                            <label for="town" class="block text-sm text-gray-600 font-medium dark:text-gray-400">Town</label>
+                            <input v-model="form.town" type="text" id="town" class="block w-full border-gray-500 rounded-md focus:border-green-500 focus:ring-green-500 sm:text-sm dark:bg-gray-600" />
+                            <i v-if="form.errors.town" class="text-red-600 text-sm">{{ form.errors.town }}</i>
+                        </div>
+                        <div class="flex-1">
+                            <label for="province" class="block text-sm text-gray-600 font-medium dark:text-gray-400">Province</label>
+                            <input v-model="form.province" type="text" id="province" class="block w-full border-gray-500 rounded-md focus:border-green-500 focus:ring-green-500 sm:text-sm dark:bg-gray-600" />
+                            <i v-if="form.errors.province" class="text-red-600 text-sm">{{ form.errors.province }}</i>
+                        </div>
                     </div>
 
                     <div class="flex">
