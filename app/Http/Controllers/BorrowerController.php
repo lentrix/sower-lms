@@ -3,21 +3,41 @@
 namespace App\Http\Controllers;
 
 use App\Models\Borrower;
+use App\Models\Loan;
 use App\Models\LoanPayment;
 use App\Models\Penalty;
 use App\Models\PenaltyPayment;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class BorrowerController extends Controller
 {
     public function index() {
-        // $borrowers = Borrower::orderBy('last_name')
-        //     ->orderBy('first_name')
-        //     ->get();
+
+        // $borrowers = Borrower::whereHas('loans', function($q) {
+        //     $q->where('status',2);
+        // })->with(['loans' => function($q) {
+        //     $q->where('status',2)
+        //         ->orderBy('released_at','DESC');
+        // }])->paginate(20);
+
+        $borrowers = Loan::where('status',2)
+            ->orderBy('released_at', 'DESC')
+            ->limit(50)->get()->map(function($q) {
+                $q->loanPlan;
+                return [
+                    'id' => $q->borrower_id,
+                    'last_name' => $q->borrower->last_name,
+                    'first_name' => $q->borrower->first_name,
+                    'address' => $q->borrower->address,
+                    'phone' => $q->borrower->phone,
+                    'activeLoan' => $q,
+                ];
+            });
 
         return inertia('Borrowers/Index',[
-            // 'borrowers' => $borrowers
-            'borrowers' => []
+            'borrowers' => $borrowers
+            // 'borrowers' => [],
         ]);
     }
 
