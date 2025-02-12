@@ -48,6 +48,7 @@ class BorrowerController extends Controller
         $fields = $request->validate([
             'first_name' => 'required|string',
             'last_name' => 'required|string',
+            'middle_name' => 'required|string',
             'address' => 'required|string',
             'contact_no' => 'required|string',
             'tax_id' => 'string',
@@ -89,6 +90,7 @@ class BorrowerController extends Controller
         $fields = request()->validate([
             'first_name' => 'required|string',
             'last_name' => 'required|string',
+            'middle_name' => 'required|string',
             'address' => 'required|string',
             'contact_no' => 'required|string',
             'tax_id' => 'string',

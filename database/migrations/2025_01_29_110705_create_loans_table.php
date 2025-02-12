@@ -20,11 +20,10 @@ return new class extends Migration
             $table->double('amount');
             $table->string('status')->comment("0=request, 1=confirmed, 2=released, 3=completed, 4=denied 5=incomplete");
             $table->double('transaction_fee')->nullable();
-            $table->timestamp('released_at');
+            $table->timestamp('released_at')->nullable();
             $table->timestamps();
             $table->foreign('loan_plan_id')->references('id')->on('loan_plans');
             $table->foreign('borrower_id')->references('id')->on('borrowers');
-
         });
     }
 
