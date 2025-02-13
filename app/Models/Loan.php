@@ -5,6 +5,7 @@ namespace App\Models;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Date;
 
 class Loan extends Model
 {
@@ -234,5 +235,32 @@ class Loan extends Model
 
         return $this->totalLoanPayable-$totalLoanPayments;
     }
+
+    public static function countType($type) {
+        return Loan::where('status',2)->whereHas('loanPlan', function($q) use ($type) {
+            $q->where('plan_type', $type);
+        })->count();
+    }
+
+    public function getDueAttribute() {
+        $now = Date::now();
+        $dueSchedules = PaymentSchedule::where('loan_id',$this->id)
+            ->where('due_date','<',$now);
+
+        $loanDue = $dueSchedules->sum('amount_due');
+
+        $loanPaid = LoanPayment::whereIn('payment_schedule_id', $dueSchedules->pluck('id'))
+            ->sum('amount');
+
+        $duePenalties = Penalty::whereIn('payment_schedule_id', $dueSchedules->pluck('id'));
+
+        $penaltyDue = $duePenalties->sum('amount');
+
+        $penaltyPaid = PenaltyPayment::whereIn('penalty_id', $duePenalties->pluck('id'))->sum('amount');
+
+        return ($loanDue + $penaltyDue) - ($loanPaid + $penaltyPaid);
+
+    }
+
 
 }
