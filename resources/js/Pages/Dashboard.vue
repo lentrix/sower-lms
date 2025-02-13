@@ -54,11 +54,11 @@ const showFilterModal=ref(false)
                                 <h4>February 13, 2025</h4>
                                 <ul class="ps-8 text-sm">
                                     <li class="list-disc">
-                                        Added Summary of Loan counts in the Dashboard with filtration
-                                        based on Loan Type, Barangay, and Town
+                                        Added Summary of Loan counts in the Dashboard
                                     </li>
                                     <li class="list-disc">
-                                        Added a list of loans that are due arranged in alphabetical order.
+                                        Added a list of loans that are due arranged in alphabetical order
+                                        with filtration based on Loan Type, Barangay, and Town
                                     </li>
                                     <li class="list-disc">
                                         Implement self-signed SSL certificate for
