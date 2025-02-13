@@ -18,14 +18,37 @@ class DashboardController extends Model
         $loans = Loan::where('status', 2)
             ->whereHas('paymentSchedules', function($q1) {
             $q1->where('due_date','<', Date::now());
-        })->get();
+        });
+
+        $type = request()->query('type');
+        $town = request()->query('town');
+        $barangay = request()->query('barangay');
+
+        if($type) {
+            $loans->whereHas('loanPlan', function($q) use ($type) {
+                $q->where('plan_type', $type);
+            });
+        }
+
+        if($barangay) {
+            $loans->whereHas('borrower', function($q) use ($barangay) {
+                $q->where('barangay', $barangay);
+            });
+        }
+
+        if($town) {
+            $loans->whereHas('borrower', function($q) use ($town) {
+                $q->where('town', $town);
+            });
+        }
 
         $dueToday = [];
-        foreach($loans as $loan) {
+        foreach($loans->get() as $loan) {
             if( ($due = $loan->due) > 0) {
                 $dueToday[] = [
                     'id' => $loan->borrower_id,
                     'borrower' => $loan->borrower->last_name . ", " . $loan->borrower->first_name,
+                    'contact_no' => $loan->borrower->contact_no,
                     'address' => $loan->borrower->barangay . ", " . $loan->borrower->town,
                     'due' => number_format($due,2),
                     'type' => $loan->loanPlan->plan_type
@@ -40,7 +63,13 @@ class DashboardController extends Model
 
         return inertia('Dashboard',[
             'summary' => $summary,
-            'dueToday' => $dueToday
+            'dueToday' => $dueToday,
+            'filter' => [
+                'type' => $type,
+                'town' => $town,
+                'barangay' => $barangay
+            ],
+            'planTypes' => config('sower.plan_types')
         ]);
     }
 }

@@ -13,7 +13,7 @@ import { library } from '@fortawesome/fontawesome-svg-core';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { faArrowsRotate, faCoins, faEdit, faEye, faFileInvoice, faFileInvoiceDollar, faFilePdf, faFloppyDisk,
     faHandHoldingDollar, faHouse, faMoneyBill1, faPeopleGroup, faSquareArrowUpRight, faTrashCan,
-    faUserPlus, faUsers, faUserSecret, faXmark, faGear } from '@fortawesome/free-solid-svg-icons';
+    faUserPlus, faUsers, faUserSecret, faXmark, faGear, faFilter } from '@fortawesome/free-solid-svg-icons';
 
 library.add(faUserSecret);
 library.add(faHouse);
@@ -34,6 +34,7 @@ library.add(faFileInvoiceDollar);
 library.add(faPeopleGroup);
 library.add(faTrashCan);
 library.add(faGear);
+library.add(faFilter);
 
 
 const toast_options = {

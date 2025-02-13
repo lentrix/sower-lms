@@ -2,13 +2,20 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import PageContent from '@/Components/PageContent.vue';
 import { Head, Link } from '@inertiajs/vue3';
+import SecondaryButton from '@/Components/SecondaryButton.vue';
+import DuesFilterModal from './DuesFilterModal.vue';
+import { ref } from 'vue';
 
 const props = defineProps({
     summary: Object,
-    dueToday: Array
+    filter: Object,
+    dueToday: Array,
+    planTypes: Array
 })
 
 const typeName = ['','Arawan','Weekly','Bi-Monthly']
+
+const showFilterModal=ref(false)
 
 </script>
 
@@ -47,7 +54,8 @@ const typeName = ['','Arawan','Weekly','Bi-Monthly']
                                 <h4>February 13, 2025</h4>
                                 <ul class="ps-8 text-sm">
                                     <li class="list-disc">
-                                        Added Summary of Loan counts in the Dashboard
+                                        Added Summary of Loan counts in the Dashboard with filtration
+                                        based on Loan Type, Barangay, and Town
                                     </li>
                                     <li class="list-disc">
                                         Added a list of loans that are due arranged in alphabetical order.
@@ -78,7 +86,17 @@ const typeName = ['','Arawan','Weekly','Bi-Monthly']
 
                     </div>
                     <div class="px-8 py-4 md:col-span-3 rounded shadow-sm border h-[500px] overflow-y-scroll">
-                        <h3 class="text-xl">Due Today ({{ dueToday.length }} accounts)</h3>
+                        <div class="flex justify-between items-start">
+                            <h3 class="text-xl">
+                                Due Today ({{ dueToday.length }} accounts)
+                                {{ filter.filter ? "Filtered "  + filter.filter + ":" : '' }}
+                                {{ filter.value ? filter.value : '' }}
+                            </h3>
+                            <SecondaryButton @click="showFilterModal=true">
+                                <font-awesome-icon icon="fa-solid fa-filter"></font-awesome-icon>
+                                &nbsp; Filter
+                            </SecondaryButton>
+                        </div>
                         <table>
                             <thead>
                                 <tr>
@@ -91,7 +109,10 @@ const typeName = ['','Arawan','Weekly','Bi-Monthly']
                             </thead>
                             <tbody>
                                 <tr v-for="due in dueToday" :key="due.id">
-                                    <td>{{ due.borrower }}</td>
+                                    <td class="flex flex-col">
+                                        <span>{{ due.borrower }}</span>
+                                        <span class="text-sm italic">{{ due.contact_no }}</span>
+                                    </td>
                                     <td class="capitalize">{{ due.address }}</td>
                                     <td>{{ typeName[due.type] }}</td>
                                     <td class="text-right">{{ due.due }}</td>
@@ -108,6 +129,8 @@ const typeName = ['','Arawan','Weekly','Bi-Monthly']
             </div>
        </PageContent>
     </AuthenticatedLayout>
+
+    <DuesFilterModal :show="showFilterModal" @close="showFilterModal=false" :planTypes="planTypes" />
 </template>
 
 <style>
