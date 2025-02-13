@@ -56,6 +56,9 @@ const typeName = ['','Arawan','Weekly','Bi-Monthly']
                                         Implement self-signed SSL certificate for
                                         Ecryption and Security
                                     </li>
+                                    <li class="list-disc">
+                                        Added a backend command to fix the amortization of Arawan Loans
+                                    </li>
                                 </ul>
                             </div>
                             <div>
