@@ -8,24 +8,13 @@ import LoanTable from '@/Components/LoanTable.vue';
 
 const props = defineProps({
     borrower: null,
-    payment_schedules: null,
-    alerts: null,
-    pending_loan: null,
+    completed: null,
+    loanHistory: null,
     totalAmountDue: null,
     totalPenalty: null,
     totalLoanPayment: null,
     totalPenaltyPayment: null,
-    loanHistory: null
 })
-
-const toast = useToast();
-
-const alerts = props.alerts
-
-watch(()=>props.alerts, () => {
-    toast.success(props.alerts.success)
-})
-
 
 const formattedDate = (dateStr, monthFormat="long") => {
     const date = new Date(dateStr)
@@ -42,30 +31,16 @@ const money = Intl.NumberFormat('en-PH',{style: 'currency', currency:"php"})
 </script>
 
 <template>
-    <Head title="View Borrower" />
+    <Head title="View Completed Loan" />
 
     <AuthenticatedLayout>
        <PageContent>
             <div class="flex justify-between items-center">
                 <h3 class="text-3xl mb-3">Borrower Details</h3>
-                <div class="pt-6 flex justify-start items-start gap-2 mb-3" v-if="borrower.activeLoan">
-                    <Link :href="'/loans/edit/' + borrower.activeLoan.id" class="px-8 py-1 rounded bg-indigo-700 text-white border border-indigo-500">
-                        <font-awesome-icon icon="fa-solid fa-edit"></font-awesome-icon>
-                        Edit Loan
-                    </Link>
-                    <Link :href="'/payments/payee/' + borrower.id" class="px-8 py-1 rounded bg-green-800 text-white shadow hover:bg-green-600 dark:bg-green-400 dark:text-green-900">
-                        <font-awesome-icon icon="fa-solid fa-money-bill-1"></font-awesome-icon>
-                        Payment
-                    </Link>
-                    <Link :href="'/loans/resync/' + borrower.activeLoan.id" class="px-8 py-1 rounded bg-indigo-800 text-white border border-indigo-500">
-                        <font-awesome-icon icon="fa-solid fa-arrows-rotate"></font-awesome-icon>
-                        Sync Amortization
-                    </Link>
-                    <Link :href="'/loans/sync-balance/' + borrower.activeLoan.id" class="px-8 py-1 rounded bg-lime-800 text-white border border-indigo-500">
-                        <font-awesome-icon icon="fa-solid fa-arrows-rotate"></font-awesome-icon>
-                        Sync Balance
-                    </Link>
-                </div>
+                <Link :href="'/borrowers/' + borrower.id" class="px-8 py-1 rounded bg-indigo-700 text-white border border-indigo-500">
+                    <font-awesome-icon icon="fa-solid fa-left-long"></font-awesome-icon>
+                    Back to Active Loan
+                </Link>
             </div>
             <div class="flex items-start gap-4">
                 <div class="4/9">
@@ -143,11 +118,11 @@ const money = Intl.NumberFormat('en-PH',{style: 'currency', currency:"php"})
                     </div>
                 </div>
                 <div class="flex-1 px-4 py-2 shadow border border-green-300 rounded bg-green-100 dark:bg-green-800">
-                    <h4 class="text-2xl">Loan Summary</h4>
+                    <h4 class="text-2xl">Loan Summary (Completed)</h4>
                     <hr>
-                    <div v-if="borrower.activeLoan" class="flex flex-row gap-4">
+                    <div v-if="completed" class="flex flex-row gap-4">
                         <div>
-                            <LoanTable :loan="borrower.activeLoan"></LoanTable>
+                            <LoanTable :loan="completed"></LoanTable>
                         </div>
                         <div class="flex-1">
                                 <h5 class="text-xl">Payment Schedule</h5>
@@ -163,7 +138,7 @@ const money = Intl.NumberFormat('en-PH',{style: 'currency', currency:"php"})
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr v-for="psched in payment_schedules" :key="psched.id">
+                                    <tr v-for="psched in completed.payment_schedules" :key="psched.id">
                                         <td>{{ formattedDate(psched.due_date,"short") }}</td>
                                         <td class="text-right">{{ money.format(psched.amount_due) }}</td>
                                         <td class="text-right text-red-700">

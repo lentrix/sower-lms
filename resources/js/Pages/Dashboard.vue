@@ -51,6 +51,17 @@ const showFilterModal=ref(false)
                         <div class="p-4 bg-purple-800 text-white rounded mt-4">
                             <h3 class="text-xl mb-3">Development Updates</h3>
                             <div>
+                                <h4>February 14, 2025</h4>
+                                <ul class="ps-8 text-sm">
+                                    <li class="list-disc">
+                                        Added ID Number to Borrower List
+                                    </li>
+                                    <li class="list-disc">
+                                        Viewing of previously completed loan
+                                    </li>
+                                </ul>
+                            </div>
+                            <div>
                                 <h4>February 13, 2025</h4>
                                 <ul class="ps-8 text-sm">
                                     <li class="list-disc">

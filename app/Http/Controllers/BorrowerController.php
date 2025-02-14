@@ -139,4 +139,25 @@ class BorrowerController extends Controller
 
         return redirect('/borrowers')->with('info', 'Borrower deleted.');
     }
+
+    public function showCompleted(Borrower $borrower, Loan $loan) {
+
+        $loan->paymentSchedules;
+
+        return inertia('Borrowers/ShowCompleted',[
+            'borrower' => $borrower,
+            'completed' => $loan,
+            'loanHistory' => $borrower->loans->load('loanPlan'),
+            'totalAmountDue'        => $loan->totalLoanPayable,
+            'totalPenalty'          => Penalty::whereHas('paymentSchedule', function($q1) use ($loan) {
+                                            $q1->where('loan_id', $loan->id);
+                                        })->sum('amount'),
+            'totalLoanPayment'      => LoanPayment::whereHas('paymentSchedule', function($q1) use ($loan) {
+                                            $q1->where('loan_id', $loan->id);
+                                        })->sum('amount'),
+            'totalPenaltyPayment'   => PenaltyPayment::whereHas('payment', function($q1) use ($loan) {
+                                            $q1->where('loan_id', $loan->id);
+                                        })->sum('amount'),
+        ]);
+    }
 }

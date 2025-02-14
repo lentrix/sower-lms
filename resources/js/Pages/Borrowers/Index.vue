@@ -42,6 +42,7 @@ const searchBorrower = () => {
             <table class="w-full my-4">
                 <thead>
                     <tr class="bg-gray-200 dark:bg-green-900 dark:text-white">
+                        <th>ID#</th>
                         <th>Name</th>
                         <th>Address & Contacts</th>
                         <th>Active Loans</th>
@@ -50,6 +51,7 @@ const searchBorrower = () => {
                 </thead>
                 <tbody>
                     <tr v-for="b in borrowers" :key="b.id" class="even:bg-green-100 dark:even:bg-gray-900" >
+                        <td>{{ String(b.id).padStart(8,'0') }}</td>
                         <td>{{ b.last_name }}, {{ b.first_name }} {{ b.middle_name }}</td>
                         <td>
                             <div class="flex flex-col">
