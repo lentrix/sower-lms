@@ -10,12 +10,22 @@ const props = defineProps({
     summary: Object,
     filter: Object,
     dueToday: Array,
-    planTypes: Array
+    planTypes: null
 })
 
 const typeName = ['','Arawan','Weekly','Bi-Monthly']
 
 const showFilterModal=ref(false)
+
+const dateStr = new Date().toLocaleDateString('en-PH', {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+})
+
+
+console.log(props.filter)
 
 </script>
 
@@ -48,11 +58,21 @@ const showFilterModal=ref(false)
                             </div>
                         </div>
 
-                        <div class="p-4 bg-purple-800 text-white rounded mt-4">
+                        <div class="p-4 bg-purple-800 text-white rounded text-xs mt-4">
                             <h3 class="text-xl mb-3">Development Updates</h3>
                             <div>
+                                <h4>February 18, 2025</h4>
+                                <ul class="ps-8 text-xs">
+                                    <li class="list-disc">
+                                        Added a button to export the list of loan dues
+                                        into a PDF file: fit for printing that is reactive of the
+                                        filter.
+                                    </li>
+                                </ul>
+                            </div>
+                            <div>
                                 <h4>February 17, 2025</h4>
-                                <ul class="ps-8 text-sm">
+                                <ul class="ps-8 text-xs">
                                     <li class="list-disc">
                                         Added a button to export the active loan of
                                         a borrower into a PDF file: fit for printing.
@@ -61,7 +81,7 @@ const showFilterModal=ref(false)
                             </div>
                             <div>
                                 <h4>February 15, 2025</h4>
-                                <ul class="ps-8 text-sm">
+                                <ul class="ps-8 text-xs">
                                     <li class="list-disc">
                                         Developed backend command to fix
                                         proportional distribution of principal
@@ -71,7 +91,7 @@ const showFilterModal=ref(false)
                             </div>
                             <div>
                                 <h4>February 14, 2025</h4>
-                                <ul class="ps-8 text-sm">
+                                <ul class="ps-8 text-xs">
                                     <li class="list-disc">
                                         Added ID Number to Borrower List
                                     </li>
@@ -82,7 +102,7 @@ const showFilterModal=ref(false)
                             </div>
                             <div>
                                 <h4>February 13, 2025</h4>
-                                <ul class="ps-8 text-sm">
+                                <ul class="ps-8 text-xs">
                                     <li class="list-disc">
                                         Added Summary of Loan counts in the Dashboard
                                     </li>
@@ -101,7 +121,7 @@ const showFilterModal=ref(false)
                             </div>
                             <div>
                                 <h4>February 12, 2025</h4>
-                                <ul class="ps-8 text-sm">
+                                <ul class="ps-8 text-xs">
                                     <li class="list-disc">
                                         Added an initial list of Borrowers in the Borrowers page based on the latest
                                         loan released.
@@ -118,14 +138,22 @@ const showFilterModal=ref(false)
                     <div class="px-8 py-4 md:col-span-3 rounded shadow-sm border h-[500px] overflow-y-scroll">
                         <div class="flex justify-between items-start">
                             <h3 class="text-xl">
-                                Due Today ({{ dueToday.length }} accounts)
+                                Due Today: {{ dateStr }} ({{ dueToday.length }} accounts)
                                 {{ filter.filter ? "Filtered "  + filter.filter + ":" : '' }}
                                 {{ filter.value ? filter.value : '' }}
                             </h3>
-                            <SecondaryButton @click="showFilterModal=true">
-                                <font-awesome-icon icon="fa-solid fa-filter"></font-awesome-icon>
-                                &nbsp; Filter
-                            </SecondaryButton>
+                            <div class="flex gap-3">
+                                <a :href="'/due-today?barangay=' + (filter.barangay?filter.barangay:'') + '&town=' + (filter.town?filter.town:'') + '&type=' + (filter.type?filter.type:'')"
+                                    class="bg-red-900 text-white px-2 py-1 rounded"
+                                    target="_blank"
+                                >
+                                    <font-awesome-icon icon="fa-solid fa-file-pdf"></font-awesome-icon>
+                                </a>
+                                <SecondaryButton @click="showFilterModal=true">
+                                    <font-awesome-icon icon="fa-solid fa-filter"></font-awesome-icon>
+                                    &nbsp; Filter
+                                </SecondaryButton>
+                            </div>
                         </div>
                         <table>
                             <thead>

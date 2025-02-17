@@ -4,6 +4,7 @@ use App\Http\Controllers\BorrowerController;
 use App\Http\Controllers\LoanController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ReportsController;
 use App\Http\Controllers\UserController;
 use App\Models\DashboardController;
 use Illuminate\Foundation\Application;
@@ -42,9 +43,8 @@ Route::middleware('auth')->group(function () {
     Route::post('/payments', [PaymentController::class, 'store'])->name('payments.store');
     Route::get('/payments/payee/{borrower}', [PaymentController::class, 'pay'])->name('payments.pay');
 
-    Route::get('/reports', function() {
-        return Inertia::render('Reports/Index');
-    })->name('reports');
+    Route::get('/reports',[ReportsController::class, 'index'])->name('reports');
+    Route::get('/due-today', [ReportsController::class, 'dueToday'])->name('due-today');
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
