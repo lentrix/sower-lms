@@ -10,6 +10,10 @@ class PaymentSchedule extends Model
 
     protected $appends = ['totalPayments','penaltyAmount', 'penaltyPayment'];
 
+    protected $casts = [
+        'due_date' => 'datetime'
+    ];
+
     public function loan() {
         return $this->belongsTo(Loan::class);
     }

@@ -13,6 +13,10 @@ class Loan extends Model
 
     protected $appends = ['plan','formattedAmount','statusText','amortization','balance','totalLoanPayable'];
 
+    protected $casts = [
+        'released_at' => 'datetime'
+    ];
+
     public function borrower() {
         return $this->belongsTo(Borrower::class);
     }
@@ -55,7 +59,7 @@ class Loan extends Model
         if($this->loanPlan->payment_schedules==0) dd($this);
 
         //arawan
-        if($this->loanPlan->month==2) {
+        if($this->loanPlan->plan_type==1) {
             $int = $this->amount * (($this->loanPlan->interest/100) * 2);
             $totalPayable = $int + $this->amount;
 
@@ -63,7 +67,7 @@ class Loan extends Model
         }
 
         //Weekly
-        if($this->loanPlan->month==3) {
+        if($this->loanPlan->plan_type==2) {
             $int = $this->amount * (($this->loanPlan->interest/100)*3);
             $totalPayable = $int + $this->amount;
             return $totalPayable/$this->loanPlan->payment_schedules;
@@ -260,6 +264,26 @@ class Loan extends Model
 
         return ($loanDue + $penaltyDue) - ($loanPaid + $penaltyPaid);
 
+    }
+
+    public function computations() {
+        $totalInterest = $this->amount * (($this->loanPlan->interest/100) * $this->loanPlan->month);
+        $totalPayable = $totalInterest + $this->amount;
+        $amortization = $totalPayable / $this->loanPlan->payment_schedules;
+
+        $interestPortionPerPayment = $totalInterest / $this->loanPlan->payment_schedules;
+        $principalPortionPerPayment = $this->amount / $this->loanPlan->payment_schedules;
+
+        $interestPortionPerPaymentPercentage = ($interestPortionPerPayment / $amortization);
+
+        return [
+            'totalInterest' => $totalInterest,
+            'totalPayable' => $totalPayable,
+            'amortization' => $amortization,
+            'interestPortionPerPayment' => $interestPortionPerPayment,
+            'principalPortionPerPayment' => $principalPortionPerPayment,
+            'interestPortionPerPaymentPercentage' => $interestPortionPerPaymentPercentage
+        ];
     }
 
 

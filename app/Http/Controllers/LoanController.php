@@ -8,6 +8,7 @@ use App\Models\Loan;
 use App\Models\LoanPlan;
 use App\Models\LoanType;
 use App\Models\PaymentSchedule;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -143,5 +144,11 @@ class LoanController extends Controller
 
         return redirect('/borrowers/' . $loan->borrower->id)->with('success','The remaining payment schedules have been synced with the balance.');
 
+    }
+
+    public function export(Loan $loan) {
+        return Pdf::loadView('pdf.loan-details', compact('loan'))
+                ->setPaper('Legal')
+                ->stream();
     }
 }

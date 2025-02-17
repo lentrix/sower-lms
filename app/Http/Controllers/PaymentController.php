@@ -81,7 +81,7 @@ class PaymentController extends Controller
                 'date' => now()
             ]);
 
-            $unsettledLoan = $loan->getUnsettledPaymentSchedules();
+            // $unsettledLoan = $loan->getUnsettledPaymentSchedules();
             $unsettledPenalty = $loan->getUnsettledPenalties();
 
             foreach($unsettledPenalty as $unP) {
@@ -106,12 +106,18 @@ class PaymentController extends Controller
 
                 $payAmount = $amountToPay>$balance ? $balance : $amountToPay;
 
+                $computations = $loan->computations();
+                $intPct = $computations['interestPortionPerPaymentPercentage'];
+
+                $interest = bcdiv($payAmount * $intPct, 1, 2);
+                $principal = bcdiv($payAmount - $interest, 1, 2);
+
                 LoanPayment::create([
                     'payment_id' => $pmt->id,
                     'payment_schedule_id' => $psched->id,
                     'amount' => $payAmount,
-                    'interest' => 0,
-                    'principal' => 0
+                    'interest' => $interest,
+                    'principal' => $principal
                 ]);
 
                 $amountToPay -= $payAmount;

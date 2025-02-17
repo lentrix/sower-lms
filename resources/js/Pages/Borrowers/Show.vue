@@ -49,6 +49,13 @@ const money = Intl.NumberFormat('en-PH',{style: 'currency', currency:"php"})
             <div class="flex justify-between items-center">
                 <h3 class="text-3xl mb-3">Borrower Details</h3>
                 <div class="pt-6 flex justify-start items-start gap-2 mb-3" v-if="borrower.activeLoan">
+                    <a :href="'/loans/export/' + borrower.activeLoan.id"
+                        class="px-8 py-1 rounded bg-red-900 text-white border border-maroon-500"
+                        target="_blank" rel="noopener noreferrer"
+                    >
+                        <font-awesome-icon icon="fa-solid fa-file-pdf"></font-awesome-icon>&nbsp;
+                        Export PDF
+                    </a>
                     <Link :href="'/loans/edit/' + borrower.activeLoan.id" class="px-8 py-1 rounded bg-indigo-700 text-white border border-indigo-500">
                         <font-awesome-icon icon="fa-solid fa-edit"></font-awesome-icon>
                         Edit Loan

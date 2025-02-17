@@ -51,6 +51,25 @@ const showFilterModal=ref(false)
                         <div class="p-4 bg-purple-800 text-white rounded mt-4">
                             <h3 class="text-xl mb-3">Development Updates</h3>
                             <div>
+                                <h4>February 17, 2025</h4>
+                                <ul class="ps-8 text-sm">
+                                    <li class="list-disc">
+                                        Added a button to export the active loan of
+                                        a borrower into a PDF file: fit for printing.
+                                    </li>
+                                </ul>
+                            </div>
+                            <div>
+                                <h4>February 15, 2025</h4>
+                                <ul class="ps-8 text-sm">
+                                    <li class="list-disc">
+                                        Developed backend command to fix
+                                        proportional distribution of principal
+                                        and interest in each Loan Payment.
+                                    </li>
+                                </ul>
+                            </div>
+                            <div>
                                 <h4>February 14, 2025</h4>
                                 <ul class="ps-8 text-sm">
                                     <li class="list-disc">

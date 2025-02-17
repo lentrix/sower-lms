@@ -27,15 +27,16 @@ Route::middleware('auth')->group(function () {
     Route::get('/borrowers',[BorrowerController::class, 'index'])->name('borrowers');
     Route::post('/borrowers', [BorrowerController::class, 'store']);
 
-    Route::get('/loans', [LoanController::class, 'index'])->name('loans');
-    Route::post('/loans', [LoanController::class, 'store'])->name('loans.store');
-    Route::put('/loans/{loan}', [LoanController::class, 'update'])->name('loans.update');
+    Route::get('/loans/export/{loan}', [LoanController::class, 'export'])->name('loans.export');
     Route::post('/loans/set-status/{status}/{loan}', [LoanController::class, 'setStatus'])->name('loans.set-status');
     Route::get('/loans/edit/{loan}', [LoanController::class, 'edit'])->name('loans.edit');
     Route::get('/loans/resync/{loan}', [LoanController::class, 'resyncAmortization'])->name('loans.resync');
     Route::get('/loans/sync-balance/{loan}', [LoanController::class, 'syncWithBalance'])->name('loans.sync-balance');
     Route::get('/loans/create/{borrower}', [LoanController::class, 'create'])->name('loans.create-with-borrower');
     Route::get('/loans/create', [LoanController::class, 'create'])->name('loans.create');
+    Route::put('/loans/{loan}', [LoanController::class, 'update'])->name('loans.update');
+    Route::get('/loans', [LoanController::class, 'index'])->name('loans');
+    Route::post('/loans', [LoanController::class, 'store'])->name('loans.store');
 
     Route::get('/payments', [PaymentController::class, 'index'])->name('payments');
     Route::post('/payments', [PaymentController::class, 'store'])->name('payments.store');
