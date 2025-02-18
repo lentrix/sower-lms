@@ -78,7 +78,7 @@ class PaymentController extends Controller
                 'loan_id' => $loan->id,
                 'or_number' => $orNo,
                 'amount' => $amountToPay,
-                'date' => now()
+                'date' => $request->date
             ]);
 
             // $unsettledLoan = $loan->getUnsettledPaymentSchedules();
