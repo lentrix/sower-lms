@@ -68,6 +68,10 @@ console.log(props.filter)
                                         into a PDF file: fit for printing that is reactive of the
                                         filter.
                                     </li>
+                                    <li class="list-disc">
+                                        Add a button to set a loan as completed when
+                                        the balance is zero or less.
+                                    </li>
                                 </ul>
                             </div>
                             <div>

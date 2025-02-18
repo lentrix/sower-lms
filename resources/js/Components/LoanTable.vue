@@ -1,4 +1,6 @@
 <script setup>
+import { Link } from '@inertiajs/vue3';
+
 
 defineProps({
     loan: Object
@@ -69,4 +71,17 @@ const formattedDate = (dateStr, monthFormat="long") => {
             </tr>
         </tbody>
     </table>
+    <div
+        v-if="loan.balance <= 0"
+        class="mt-4"
+    >
+        <Link
+            :href="'/loans/set-status/3/' + loan.id"
+            method="post"
+            class="px-4 py-2 bg-green-500 text-white rounded-md"
+        >
+            <font-awesome-icon icon="fa-solid fa-check"></font-awesome-icon>
+            &nbsp;Completed
+        </Link>
+    </div>
 </template>
