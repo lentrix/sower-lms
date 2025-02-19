@@ -20,7 +20,7 @@ class Payment extends Model
     }
 
     public function loanPayments() {
-        return $this->belongsTo(LoanPayment::class);
+        return $this->hasMany(LoanPayment::class);
     }
 
     public function penaltyPayments() {

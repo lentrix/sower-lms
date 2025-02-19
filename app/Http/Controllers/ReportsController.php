@@ -3,14 +3,64 @@
 namespace App\Http\Controllers;
 
 use App\Models\Loan;
+use App\Models\LoanPayment;
+use App\Models\Payment;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Date;
 
 class ReportsController extends Controller
 {
-    public function index() {
-        return inertia('Reports/Index');
+    public function index(Request $request) {
+
+        $now = Carbon::now();
+        $year = $request->year ? $request->year : $now->year;
+        $month = $request->month ? $request->month : $now->month;
+
+        $payments = Payment::whereYear('date', $year)->whereMonth('date', $month)
+            ->orderBy('or_number')
+            ->get();
+
+        $paymentReport = [];
+        $totalLoanPayments = 0;
+        $totalInterestPaid = 0;
+        $totalPrincipalPaid = 0;
+        $totalPenaltyPaid = 0;
+
+        $cashFlowReport = [
+            'loanPayment' => 0,
+            'interestPayment' => 0,
+            'principalPayment' => 0,
+            'penaltyPayment' => 0,
+        ];
+
+        foreach($payments as $pmt) {
+            $paymentReport[] = [
+                'id' => $pmt->id,
+                'date' => $pmt->date->format('M-d-Y'),
+                'orno' => $pmt->or_number,
+                'payor' => $pmt->loan->borrower->full_name,
+                'amount' => $pmt->amount,
+                'principal' => $prin = $pmt->loanPayments?->sum('principal'),
+                'interest' => $intr = $pmt->loanPayments?->sum('interest'),
+                'penalty' => $pnlty = $pmt->penaltyPayments?->sum('amount')
+            ];
+            $cashFlowReport['loanPayment'] += $pmt->amount;
+            $cashFlowReport['interestPayment'] += $intr;
+            $cashFlowReport['principalPayment'] += $prin;
+            $cashFlowReport['penaltyPayment'] += $pnlty;
+        }
+
+        $loansCount = Loan::whereYear('released_at', $year)->whereMonth('released_at', $month)->count();
+
+        $cashFlowReport['processing'] = $loansCount * 100;
+        $cashFlowReport['insurance'] = $loansCount * 50;
+
+        $monthNum = $now->month;
+
+
+        return inertia('Reports/Index', compact('paymentReport','cashFlowReport','month','year'));
     }
 
     public function dueToday() {
@@ -67,4 +117,5 @@ class ReportsController extends Controller
             ->setPaper('letter', 'portrait')
             ->stream('due-today.pdf');
     }
+
 }

@@ -33,4 +33,8 @@ class Borrower extends Model
     public function getAddressAttribute() {
         return "$this->barangay, $this->town, $this->province";
     }
+
+    public function getFullNameAttribute() {
+        return $this->last_name . ", " . $this->first_name;
+    }
 }
