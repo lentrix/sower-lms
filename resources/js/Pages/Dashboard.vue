@@ -61,6 +61,15 @@ console.log(props.filter)
                         <div class="p-4 bg-purple-800 text-white rounded text-xs mt-4">
                             <h3 class="text-xl mb-3">Development Updates</h3>
                             <div>
+                                <h4>February 19, 2025</h4>
+                                <ul class="ps-8 text-xs">
+                                    <li class="list-disc">
+                                        Added reports with two types: Cash Flow and Payments
+                                        in a monthly basis.
+                                    </li>
+                                </ul>
+                            </div>
+                            <div>
                                 <h4>February 18, 2025</h4>
                                 <ul class="ps-8 text-xs">
                                     <li class="list-disc">
