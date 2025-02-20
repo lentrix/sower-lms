@@ -19,7 +19,7 @@ class PaymentController extends Controller
                 ->where('loans.status','=',2)
                 ->select('borrowers.id', 'last_name','first_name','middle_name')->get();
 
-        $payments = Payment::orderBy('date','DESC')->limit(50)->get()->map(function($pmt) {
+        $payments = Payment::orderBy('created_at','DESC')->limit(50)->get()->map(function($pmt) {
             return [
                 'date' => $pmt->date->format('M d, Y'),
                 'orno' => $pmt->or_number,
