@@ -122,7 +122,7 @@ const searchPayee = () => {
                                 </tr>
                             </tbody>
                         </table>
-                        <form @submit.prevent="submitPayment" class="mx-2 my-3" v-if="balance>0">
+                        <form @submit.prevent="submitPayment" class="mx-2 my-3" v-if="balance>0.5">
                             <div class="mb-3 flex flex-col">
                                 <label for="date">Date::</label>
                                 <input v-model="form.date" type="date" id="date" :class="form.errors.date ? 'border-red-400' :''" class="block w-full border-gray-500 rounded-md focus:border-green-500 focus:ring-green-500 sm:text-sm dark:bg-gray-600" />
