@@ -104,7 +104,7 @@ class PaymentController extends Controller
                 $balance = $psched->amount_due - $psched->loanPayments->sum('amount');
                 if($balance == 0) continue;
 
-                $payAmount = $amountToPay>$balance ? $balance : $amountToPay;
+                $payAmount = (float)($amountToPay>$balance ? $balance : $amountToPay);
 
                 $computations = $loan->computations();
                 $intPct = $computations['interestPortionPerPaymentPercentage'];
