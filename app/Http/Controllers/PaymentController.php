@@ -101,15 +101,13 @@ class PaymentController extends Controller
             foreach($loan->paymentSchedules as $psched) {
                 if($amountToPay==0) break;
 
-                $balance = $psched->amount_due - $psched->loanPayments->sum('amount');
+                $balance = number_format($psched->amount_due - $psched->loanPayments->sum('amount'),2);
                 if($balance == 0) continue;
 
                 $payAmount = (float)($amountToPay>$balance ? $balance : $amountToPay);
 
                 $computations = $loan->computations();
                 $intPct = $computations['interestPortionPerPaymentPercentage'];
-
-                dd($payAmount, $intPct);
 
                 $interest = bcdiv($payAmount * $intPct, 1, 2);
                 $principal = bcdiv($payAmount - $interest, 1, 2);
