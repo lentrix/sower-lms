@@ -109,6 +109,8 @@ class PaymentController extends Controller
                 $computations = $loan->computations();
                 $intPct = $computations['interestPortionPerPaymentPercentage'];
 
+                dd($payAmount, $intPct);
+
                 $interest = bcdiv($payAmount * $intPct, 1, 2);
                 $principal = bcdiv($payAmount - $interest, 1, 2);
 
