@@ -90,7 +90,7 @@ class Loan extends Model
 
             $amortization = number_format($this->amortization,2,".","");
 
-            if($dueDate->dayOfWeek == 0) $dueDate->addDay;
+            if($dueDate->dayOfWeek == 0) $dueDate->addDay();
 
             if($this->loanPlan->month=="2") { //Arawan
                 for($i=0; $i<$this->loanPlan->payment_schedules; $i++) {
