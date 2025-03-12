@@ -61,6 +61,21 @@ console.log(props.filter)
                         <div class="p-4 bg-purple-800 text-white rounded text-xs mt-4">
                             <h3 class="text-xl mb-3">Development Updates</h3>
                             <div>
+                                <h4>March 12, 2025</h4>
+                                <ul class="ps-8 text-xs">
+                                    <li class="list-disc">
+                                        Added automation implementation of penalty
+                                        on delinquent accounts on a per payment schedule basis
+                                        with different rules per loan type
+                                    </li>
+                                    <li class="list-disc">
+                                        Added an 'X' that is visible on hover on each penalty
+                                        amount that will show a dialog box for removing a penalty
+                                        as an implementation workflow for approved penalty condonation
+                                    </li>
+                                </ul>
+                            </div>
+                            <div>
                                 <h4>February 19, 2025</h4>
                                 <ul class="ps-8 text-xs">
                                     <li class="list-disc">
