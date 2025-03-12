@@ -7,6 +7,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReportsController;
 use App\Http\Controllers\UserController;
 use App\Models\DashboardController;
+use App\Models\PaymentSchedule;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -38,6 +39,11 @@ Route::middleware('auth')->group(function () {
     Route::put('/loans/{loan}', [LoanController::class, 'update'])->name('loans.update');
     Route::get('/loans', [LoanController::class, 'index'])->name('loans');
     Route::post('/loans', [LoanController::class, 'store'])->name('loans.store');
+
+    Route::delete('/penalty/{paymentSchedule}', function(PaymentSchedule $paymentSchedule){
+        $paymentSchedule->penalty->delete();
+        return back()->with('success','The penalty has been removed');
+    });
 
     Route::get('/payments', [PaymentController::class, 'index'])->name('payments');
     Route::post('/payments', [PaymentController::class, 'store'])->name('payments.store');

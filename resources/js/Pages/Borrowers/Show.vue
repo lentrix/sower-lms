@@ -5,6 +5,7 @@ import { Head, Link, usePage } from '@inertiajs/vue3';
 import { defineProps, ref, computed, watch, onMounted } from 'vue';
 import { useToast } from "vue-toastification";
 import LoanTable from '@/Components/LoanTable.vue';
+import RemovePenaltyModal from './RemovePenaltyModal.vue';
 
 const props = defineProps({
     borrower: null,
@@ -38,6 +39,15 @@ const formattedDate = (dateStr, monthFormat="long") => {
 }
 
 const money = Intl.NumberFormat('en-PH',{style: 'currency', currency:"php"})
+
+const selectedPaymentSchedule = ref(null)
+const showRemovePenaltyModal = ref(false)
+
+const removePenalty = (paymentSched) => {
+    if(paymentSched.totalPayments>0) return;
+    selectedPaymentSchedule.value = paymentSched
+    showRemovePenaltyModal.value = true
+}
 
 </script>
 
@@ -174,9 +184,17 @@ const money = Intl.NumberFormat('en-PH',{style: 'currency', currency:"php"})
                                         <td>{{ formattedDate(psched.due_date,"short") }}</td>
                                         <td class="text-right">{{ money.format(psched.amount_due) }}</td>
                                         <td class="text-right text-red-700">
-                                            <template v-if="psched.penaltyAmount>0">
-                                                {{ money.format(psched.penaltyAmount) }}
-                                            </template>
+                                            <div
+                                                v-if="psched.penaltyAmount>0"
+                                                class="flex justify-end gap-1 items-center"
+                                            >
+                                                <div>{{ money.format(psched.penaltyAmount) }}</div>
+                                                <font-awesome-icon
+                                                    icon="fa-solid fa-xmark"
+                                                    class="show-on-hover"
+                                                    @click="removePenalty(psched)"
+                                                />
+                                            </div>
                                         </td>
                                         <td class="text-right">
                                             <template v-if="psched.totalPayments>0">{{ money.format(psched.totalPayments) }}</template>
@@ -232,9 +250,17 @@ const money = Intl.NumberFormat('en-PH',{style: 'currency', currency:"php"})
             </div>
        </PageContent>
     </AuthenticatedLayout>
+
+    <RemovePenaltyModal
+        :paymentSchedule="selectedPaymentSchedule"
+        :show="showRemovePenaltyModal"
+        @close="showRemovePenaltyModal=false"
+    />
+
 </template>
 
-<style>
+
+<style scoped>
 table {
     width: 100%;
 }
@@ -254,5 +280,13 @@ td {
     vertical-align: top;
     border: 0;
     border-bottom: 1px solid rgb(60, 165, 60);
+}
+
+.show-on-hover {
+    opacity: 0;
+    cursor: pointer;
+    &:hover {
+        opacity: 1.0
+    }
 }
 </style>

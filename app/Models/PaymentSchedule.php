@@ -37,4 +37,22 @@ class PaymentSchedule extends Model
     public function getPenaltyPaymentAttribute() {
         return $this->penalty ? $this->penalty->penaltyPayments->sum('amount') : 0;
     }
+
+    public function imposePenalty() {
+
+        $penaltyAmount = $this->amount_due * ($this->loan->loanPlan->penalty/100.0);
+
+        Penalty::create([
+            'payment_schedule_id' => $this->id,
+            'amount' => $penaltyAmount
+        ]);
+
+        echo ($this->loan->borrower->last_name
+            . ', '
+            . $this->loan->borrower->first_name
+            . " Type: " . $this->loan->loanPlan->planText
+            . " Due Date: " . $this->due_date->format('M-d-Y')
+            . " Amount: " . $this->amount_due
+            . " Penalty: " . $penaltyAmount . "\n");
+    }
 }

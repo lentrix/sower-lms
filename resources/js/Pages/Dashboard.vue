@@ -148,7 +148,7 @@ console.log(props.filter)
                         </div>
 
                     </div>
-                    <div class="px-8 py-4 md:col-span-3 rounded shadow-sm border h-[500px] overflow-y-scroll">
+                    <div class="px-8 py-4 md:col-span-3 rounded shadow-sm border">
                         <div class="flex justify-between items-start">
                             <h3 class="text-xl">
                                 Due Today: {{ dateStr }} ({{ dueToday.length }} accounts)
