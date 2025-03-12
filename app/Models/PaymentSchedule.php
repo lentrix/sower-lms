@@ -47,12 +47,12 @@ class PaymentSchedule extends Model
             'amount' => $penaltyAmount
         ]);
 
-        echo ($this->loan->borrower->last_name
-            . ', '
-            . $this->loan->borrower->first_name
-            . " Type: " . $this->loan->loanPlan->planText
-            . " Due Date: " . $this->due_date->format('M-d-Y')
-            . " Amount: " . $this->amount_due
-            . " Penalty: " . $penaltyAmount . "\n");
+        // echo ($this->loan->borrower->last_name
+        //     . ', '
+        //     . $this->loan->borrower->first_name
+        //     . " Type: " . $this->loan->loanPlan->planText
+        //     . " Due Date: " . $this->due_date->format('M-d-Y')
+        //     . " Amount: " . $this->amount_due
+        //     . " Penalty: " . $penaltyAmount . "\n");
     }
 }
