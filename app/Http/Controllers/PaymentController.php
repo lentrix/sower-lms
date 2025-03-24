@@ -110,8 +110,9 @@ class PaymentController extends Controller
 
                 $intPct = $computations['interestPortionPerPaymentPercentage'];
 
-                $interest = bcdiv($payAmount * $intPct, 1, 2);
-                $principal = bcdiv($payAmount - $interest, 1, 2);
+
+                $interest = round($payAmount * $intPct, 2);
+                $principal = round($payAmount - $interest, 2);
 
                 LoanPayment::create([
                     'payment_id' => $pmt->id,
