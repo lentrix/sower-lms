@@ -1,9 +1,18 @@
 <script setup>
-import { Link } from '@inertiajs/vue3';
+import { Link, useForm } from '@inertiajs/vue3';
+import Modal from './Modal.vue';
+import { ref } from 'vue';
+import InputLabel from './InputLabel.vue';
+import TextInput from './TextInput.vue';
 
 
-defineProps({
+const props = defineProps({
     loan: Object
+})
+
+const form = useForm({
+    loan_id: props.loan.id,
+    released_at: props.loan.released_at
 })
 
 const money = Intl.NumberFormat('en-PH',{style: 'currency', currency:"php"})
@@ -16,6 +25,14 @@ const formattedDate = (dateStr, monthFormat="long") => {
         year: "numeric"
     })
     return formatter.format(date)
+}
+
+const showUpdateReleaseDataModal = ref(false)
+
+
+const submit = () => {
+    form.patch('/loans/' + props.loan.id)
+    showUpdateReleaseDataModal.value = false
 }
 
 </script>
@@ -67,7 +84,12 @@ const formattedDate = (dateStr, monthFormat="long") => {
             </tr>
             <tr v-if="loan.status==2">
                 <th>Release Date</th>
-                <td>{{ formattedDate(loan.released_at) }}</td>
+                <td class="flex justify-between">
+                    <div>{{ formattedDate(loan.released_at) }}</div>
+                    <button class="bg-gray-300-p-1 rounded text-blue-600" @click="showUpdateReleaseDataModal=true">
+                        <font-awesome-icon icon="fa-solid fa-edit"></font-awesome-icon>
+                    </button>
+                </td>
             </tr>
         </tbody>
     </table>
@@ -84,4 +106,18 @@ const formattedDate = (dateStr, monthFormat="long") => {
             &nbsp;Completed
         </Link>
     </div>
+    <Modal maxWidth="md" :show="showUpdateReleaseDataModal" @close="showUpdateReleaseDataModal=false" >
+        <div class="p-8 flex flex-col gap-4 border border-gray-300">
+            <h3 class="text-xl">Update Release Date</h3>
+            <form @submit.prevent="submit">
+                <div class="mb-3">
+                    <InputLabel for="release_date">Release Date:</InputLabel>
+                    <TextInput id="release_date" type="date" v-model="form.released_at" class="block"></TextInput>
+                </div>
+                <button class="bg-blue-700 text-white px-8 py-2 rounded" type="submit">
+                    Update
+                </button>
+            </form>
+        </div>
+    </Modal>
 </template>

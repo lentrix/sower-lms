@@ -75,6 +75,8 @@ class LoanController extends Controller
 
         if($status==2) {
             $loan->generatePaymentSchedules();
+            $loan->released_at = now();
+            $loan->save();
         }
 
         return redirect('/borrowers/' . $loan->borrower->id)->with('success',"This loan's status has been set to " . config('sower.status_names')[$status]);
@@ -150,5 +152,14 @@ class LoanController extends Controller
         return Pdf::loadView('pdf.loan-details', compact('loan'))
                 ->setPaper('Legal')
                 ->stream();
+    }
+
+    public function updateReleaseDate(Request $request) {
+        $loan = Loan::findOrFail($request->loan_id);
+
+        $loan->released_at = $request->released_at;
+        $loan->save();
+
+        return back()->with('success','The release date of this loan has been updated successfully.');
     }
 }

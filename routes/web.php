@@ -37,6 +37,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/loans/create/{borrower}', [LoanController::class, 'create'])->name('loans.create-with-borrower');
     Route::get('/loans/create', [LoanController::class, 'create'])->name('loans.create');
     Route::put('/loans/{loan}', [LoanController::class, 'update'])->name('loans.update');
+    Route::patch('/loans/{loan}', [LoanController::class, 'updateReleaseDate']);
     Route::get('/loans', [LoanController::class, 'index'])->name('loans');
     Route::post('/loans', [LoanController::class, 'store'])->name('loans.store');
 

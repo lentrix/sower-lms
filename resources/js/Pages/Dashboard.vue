@@ -58,8 +58,21 @@ console.log(props.filter)
                             </div>
                         </div>
 
-                        <div class="p-4 bg-purple-800 text-white rounded text-xs mt-4">
+                        <div class="p-4 bg-purple-800 text-white rounded text-xs mt-4 max-h-[500px] overflow-scroll">
                             <h3 class="text-xl mb-3">Development Updates</h3>
+                            <div>
+                                <h4>March 25, 2025</h4>
+                                <ul class="ps-8 text-xs">
+                                    <li class="list-disc">
+                                        Fixed bug: Everytime a the Release button is clicked to release a Loan,
+                                        the Loan's release date is now set to the current date of the server.
+                                    </li>
+                                    <li class="list-disc">
+                                        For active loans, the release date can be updated by clicking a small button beside
+                                        the release date and select a new release date and clicking on update.
+                                    </li>
+                                </ul>
+                            </div>
                             <div>
                                 <h4>March 12, 2025</h4>
                                 <ul class="ps-8 text-xs">
