@@ -35,10 +35,10 @@ console.log(props.filter)
     <AuthenticatedLayout>
        <PageContent>
             <div class="">
-                <h2 class="text-2xl mb-4">Dashboard</h2>
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <h2 class="mb-4 text-2xl">Dashboard</h2>
+                <div class="grid grid-cols-1 gap-4 md:grid-cols-4">
                     <div>
-                        <div class="px-8 py-4 rounded shadow-sm border">
+                        <div class="px-8 py-4 rounded border shadow-sm">
                             <h3 class="text-xl">Summary</h3>
                             <div class="flex justify-between mt-3">
                                 <span class="text-2xl">Active Loans</span>
@@ -59,10 +59,20 @@ console.log(props.filter)
                         </div>
 
                         <div class="p-4 bg-purple-800 text-white rounded text-xs mt-4 max-h-[500px] overflow-scroll">
-                            <h3 class="text-xl mb-3">Development Updates</h3>
+                            <h3 class="mb-3 text-xl">Development Updates</h3>
+                            <div>
+                                <h4>April 3, 2025</h4>
+                                <ul class="text-xs ps-8">
+                                    <li class="list-disc">
+                                        Created a functionality "Re-Build Pmt Sched" used to rebuild the
+                                        payment schedules for those that needed update of release date and/or update of
+                                        Loan Type by clicking on the button.
+                                    </li>
+                                </ul>
+                            </div>
                             <div>
                                 <h4>March 25, 2025</h4>
-                                <ul class="ps-8 text-xs">
+                                <ul class="text-xs ps-8">
                                     <li class="list-disc">
                                         Fixed bug: Everytime a the Release button is clicked to release a Loan,
                                         the Loan's release date is now set to the current date of the server.
@@ -75,7 +85,7 @@ console.log(props.filter)
                             </div>
                             <div>
                                 <h4>March 12, 2025</h4>
-                                <ul class="ps-8 text-xs">
+                                <ul class="text-xs ps-8">
                                     <li class="list-disc">
                                         Added automation implementation of penalty
                                         on delinquent accounts on a per payment schedule basis
@@ -90,7 +100,7 @@ console.log(props.filter)
                             </div>
                             <div>
                                 <h4>February 19, 2025</h4>
-                                <ul class="ps-8 text-xs">
+                                <ul class="text-xs ps-8">
                                     <li class="list-disc">
                                         Added reports with two types: Cash Flow and Payments
                                         in a monthly basis.
@@ -99,7 +109,7 @@ console.log(props.filter)
                             </div>
                             <div>
                                 <h4>February 18, 2025</h4>
-                                <ul class="ps-8 text-xs">
+                                <ul class="text-xs ps-8">
                                     <li class="list-disc">
                                         Added a button to export the list of loan dues
                                         into a PDF file: fit for printing that is reactive of the
@@ -113,7 +123,7 @@ console.log(props.filter)
                             </div>
                             <div>
                                 <h4>February 17, 2025</h4>
-                                <ul class="ps-8 text-xs">
+                                <ul class="text-xs ps-8">
                                     <li class="list-disc">
                                         Added a button to export the active loan of
                                         a borrower into a PDF file: fit for printing.
@@ -122,7 +132,7 @@ console.log(props.filter)
                             </div>
                             <div>
                                 <h4>February 15, 2025</h4>
-                                <ul class="ps-8 text-xs">
+                                <ul class="text-xs ps-8">
                                     <li class="list-disc">
                                         Developed backend command to fix
                                         proportional distribution of principal
@@ -132,7 +142,7 @@ console.log(props.filter)
                             </div>
                             <div>
                                 <h4>February 14, 2025</h4>
-                                <ul class="ps-8 text-xs">
+                                <ul class="text-xs ps-8">
                                     <li class="list-disc">
                                         Added ID Number to Borrower List
                                     </li>
@@ -143,7 +153,7 @@ console.log(props.filter)
                             </div>
                             <div>
                                 <h4>February 13, 2025</h4>
-                                <ul class="ps-8 text-xs">
+                                <ul class="text-xs ps-8">
                                     <li class="list-disc">
                                         Added Summary of Loan counts in the Dashboard
                                     </li>
@@ -162,7 +172,7 @@ console.log(props.filter)
                             </div>
                             <div>
                                 <h4>February 12, 2025</h4>
-                                <ul class="ps-8 text-xs">
+                                <ul class="text-xs ps-8">
                                     <li class="list-disc">
                                         Added an initial list of Borrowers in the Borrowers page based on the latest
                                         loan released.
@@ -176,7 +186,7 @@ console.log(props.filter)
                         </div>
 
                     </div>
-                    <div class="px-8 py-4 md:col-span-3 rounded shadow-sm border">
+                    <div class="px-8 py-4 rounded border shadow-sm md:col-span-3">
                         <div class="flex justify-between items-start">
                             <h3 class="text-xl">
                                 Due Today: {{ dateStr }} ({{ dueToday.length }} accounts)
@@ -185,7 +195,7 @@ console.log(props.filter)
                             </h3>
                             <div class="flex gap-3">
                                 <a :href="'/due-today?barangay=' + (filter.barangay?filter.barangay:'') + '&town=' + (filter.town?filter.town:'') + '&type=' + (filter.type?filter.type:'')"
-                                    class="bg-red-900 text-white px-2 py-1 rounded"
+                                    class="px-2 py-1 text-white bg-red-900 rounded"
                                     target="_blank"
                                 >
                                     <font-awesome-icon icon="fa-solid fa-file-pdf"></font-awesome-icon>
@@ -216,7 +226,7 @@ console.log(props.filter)
                                     <td>{{ typeName[due.type] }}</td>
                                     <td class="text-right">{{ due.due }}</td>
                                     <td>
-                                        <Link class="text-gray-600 mx-2" :href="'/borrowers/' + due.id">
+                                        <Link class="mx-2 text-gray-600" :href="'/borrowers/' + due.id">
                                             <font-awesome-icon icon="fa-solid fa-square-arrow-up-right"></font-awesome-icon>
                                         </Link>
                                     </td>
