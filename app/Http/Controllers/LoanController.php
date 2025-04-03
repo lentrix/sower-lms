@@ -5,12 +5,15 @@ namespace App\Http\Controllers;
 use App\Models\Borrower;
 use App\Models\Category;
 use App\Models\Loan;
+use App\Models\LoanPayment;
 use App\Models\LoanPlan;
-use App\Models\LoanType;
 use App\Models\PaymentSchedule;
+use App\Models\Penalty;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use PDO;
 
 class LoanController extends Controller
 {
@@ -41,6 +44,7 @@ class LoanController extends Controller
 
         $amount = str_replace(",","", $request->amount);
         $month = $request->plan['month'];
+
         $paymentScheds = $request->plan['payment_schedules'];
 
         // $intRate = $category->interest_rate/100;
@@ -74,9 +78,9 @@ class LoanController extends Controller
         $loan->update(['status'=>$status]);
 
         if($status==2) {
-            $loan->generatePaymentSchedules();
             $loan->released_at = now();
             $loan->save();
+            $loan->generatePaymentSchedules();
         }
 
         return redirect('/borrowers/' . $loan->borrower->id)->with('success',"This loan's status has been set to " . config('sower.status_names')[$status]);
@@ -110,7 +114,8 @@ class LoanController extends Controller
             'category_id' => $request->category_id,
             'interest' => $category->interest_rate,
             'penalty' => $request->plan['penalty'],
-            'payment_schedules' => $request->plan['payment_schedules']
+            'payment_schedules' => $request->plan['payment_schedules'],
+            'plan_type' => $request->plan['plan_type']
         ]);
 
         return redirect('/borrowers/' . $loan->borrower->id)->with('success','The loan has been updated.');
@@ -161,5 +166,62 @@ class LoanController extends Controller
         $loan->save();
 
         return back()->with('success','The release date of this loan has been updated successfully.');
+    }
+
+    public function rebuildPaymentSchedule(Loan $loan) {
+
+        //check penalties
+        $penalties = Penalty::whereHas('paymentSchedule', function($q1) use ($loan) {
+            $q1->where('loan_id', $loan->id);
+        })->count();
+
+        if($penalties>0) return back()->with('error','This loan contains penalties. Payment Schedule rebuild cannot proceed safely.');
+
+        LoanPayment::whereHas('payment', function($q1) use($loan) { $q1->where('loan_id', $loan->id);})->delete();
+
+        PaymentSchedule::where('loan_id', $loan->id)->delete();
+
+        $loan->generatePaymentSchedules();
+
+
+        //rebuild payments
+        foreach($loan->payments as $pmt) {
+
+            $amountToPay = $pmt->amount;
+
+            foreach($loan->paymentSchedules as $psched) {
+                if($amountToPay==0) break;
+
+                $balance = $psched->amount_due - $psched->loanPayments->sum('amount');
+
+                if($balance == 0) continue;
+
+        $payAmount = (float)($amountToPay>$balance ? $balance : $amountToPay);
+
+                $computations = $loan->computations();
+
+                $intPct = $computations['interestPortionPerPaymentPercentage'];
+
+
+                $interest = round($payAmount * $intPct, 2);
+                $principal = round($payAmount - $interest, 2);
+
+                $lp = LoanPayment::create([
+                    'payment_id' => $pmt->id,
+                    'payment_schedule_id' => $psched->id,
+                    'amount' => $payAmount,
+                    'interest' => $interest,
+                    'principal' => $principal
+                ]);
+
+                $psched->refresh();
+
+                $amountToPay -= $payAmount;
+            }
+
+
+        }
+
+        return back();
     }
 }

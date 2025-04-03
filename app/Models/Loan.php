@@ -86,7 +86,7 @@ class Loan extends Model
             }
 
             //initialized dueDate for the next day
-            $dueDate = Carbon::now()->addDay();
+            $dueDate = $this->released_at->addDay();
 
             $amortization = number_format($this->amortization,2,".","");
 

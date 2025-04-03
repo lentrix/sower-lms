@@ -63,74 +63,11 @@ class PaymentController extends Controller
 
     public function store(Request $request) {
 
-        // dd($request->all());
-
         $loan = Loan::findOrFail($request->loan_id);
-
         $amountToPay = $request->amount_paid;
         $orNo = $request->or_number;
 
-        DB::beginTransaction();
-
-        try {
-
-            $pmt = Payment::create([
-                'loan_id' => $loan->id,
-                'or_number' => $orNo,
-                'amount' => $amountToPay,
-                'date' => $request->date
-            ]);
-
-            // $unsettledLoan = $loan->getUnsettledPaymentSchedules();
-            $unsettledPenalty = $loan->getUnsettledPenalties();
-
-            foreach($unsettledPenalty as $unP) {
-                if($amountToPay==0) break;
-
-                $payAmount = $amountToPay >= $unP['balance'] ? $unP['balance'] : $amountToPay;
-
-                PenaltyPayment::create([
-                    'payment_id' => $pmt->id,
-                    'penalty_id' => $unP['penalty']->id,
-                    'amount' => $payAmount
-                ]);
-
-                $amountToPay-=$payAmount;
-            }
-
-            foreach($loan->paymentSchedules as $psched) {
-                if($amountToPay==0) break;
-
-                $balance = $psched->amount_due - $psched->loanPayments->sum('amount');
-                if($balance == 0) continue;
-
-                $payAmount = (float)($amountToPay>$balance ? $balance : $amountToPay);
-
-                $computations = $loan->computations();
-
-                $intPct = $computations['interestPortionPerPaymentPercentage'];
-
-
-                $interest = round($payAmount * $intPct, 2);
-                $principal = round($payAmount - $interest, 2);
-
-                LoanPayment::create([
-                    'payment_id' => $pmt->id,
-                    'payment_schedule_id' => $psched->id,
-                    'amount' => $payAmount,
-                    'interest' => $interest,
-                    'principal' => $principal
-                ]);
-
-                $amountToPay -= $payAmount;
-            }
-
-            DB::commit();
-
-        }catch(Exception $ex) {
-            DB::rollBack();
-            dd($ex);
-        }
+        Payment::pay($loan, $amountToPay, $orNo, $request->date);
 
         return redirect('/borrowers/' . $loan->borrower_id)->with('success','Payment has been recorded successfully!');
     }
