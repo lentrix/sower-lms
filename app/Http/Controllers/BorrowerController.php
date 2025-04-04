@@ -68,6 +68,35 @@ class BorrowerController extends Controller
 
     }
 
+    public function filter(Request $request) {
+
+        $borrowers = Borrower::orderBy('last_name')
+                ->orderBy('first_name');
+
+        if($request->barangay) {
+            $borrowers->where('barangay','like',"%$request->barangay%");
+        }
+
+        if($request->town) {
+            $borrowers->where('town','like',"%$request->town%");
+        }
+
+        $borrowers = $borrowers->get()->map(function($q) {
+            return [
+                'id' => $q->id,
+                'last_name' => $q->last_name,
+                'first_name' => $q->first_name,
+                'address' => $q->address,
+                'contact_no' => $q->contact_no,
+                'activeLoan' => $q->activeLoan,
+            ];
+        });
+
+        return inertia('Borrowers/Index',[
+            'borrowers' => $borrowers
+        ]);
+    }
+
     public function create() {
         return inertia('Borrowers/Create');
     }

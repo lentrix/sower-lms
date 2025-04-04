@@ -61,6 +61,14 @@ console.log(props.filter)
                         <div class="p-4 bg-purple-800 text-white rounded text-xs mt-4 max-h-[500px] overflow-scroll">
                             <h3 class="mb-3 text-xl">Development Updates</h3>
                             <div>
+                                <h4>April 5, 2025</h4>
+                                <ul class="text-xs ps-8">
+                                    <li class="list-disc">
+                                        Added filter for Town and Barangay in the Borrowers listing
+                                    </li>
+                                </ul>
+                            </div>
+                            <div>
                                 <h4>April 4, 2025</h4>
                                 <ul class="text-xs ps-8">
                                     <li class="list-disc">

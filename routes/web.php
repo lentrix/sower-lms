@@ -21,6 +21,7 @@ Route::get('/dashboard', [DashboardController::class,'index'])->middleware(['aut
 Route::middleware('auth')->group(function () {
 
     Route::get('/borrowers/create',[BorrowerController::class, 'create'])->name('borrowers.create');
+    Route::get('/borrowers/filter',[BorrowerController::class, 'filter'])->name('borrowers.create');
     Route::get('/borrowers/search', [BorrowerController::class, 'search']);
     Route::get('/borrowers/edit/{borrower}',[BorrowerController::class, 'edit'])->name('borrowers.edit');
     Route::get('/borrowers/{borrower}/completed/{loan}',[BorrowerController::class, 'showCompleted']);
