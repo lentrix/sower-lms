@@ -224,4 +224,14 @@ class LoanController extends Controller
 
         return back();
     }
+
+    public function paymentHistory(Loan $loan) {
+
+        $loan->load('payments');
+
+        return inertia('Borrowers/LoanPaymentHistory',[
+            'loan' => $loan,
+            'loanHistory' => $loan->borrower->loans->load('loanPlan')
+        ]);
+    }
 }

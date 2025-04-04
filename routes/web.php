@@ -36,6 +36,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/loans/sync-balance/{loan}', [LoanController::class, 'syncWithBalance'])->name('loans.sync-balance');
     Route::get('/loans/create/{borrower}', [LoanController::class, 'create'])->name('loans.create-with-borrower');
     Route::get('/loans/create', [LoanController::class, 'create'])->name('loans.create');
+    Route::get('/loans/payment-history/{loan}', [LoanController::class, 'paymentHistory']);
     Route::post('/loans/{loan}/rebuild-payment-schedule',[LoanController::class, 'rebuildPaymentSchedule']);
     Route::put('/loans/{loan}', [LoanController::class, 'update'])->name('loans.update');
     Route::patch('/loans/{loan}', [LoanController::class, 'updateReleaseDate']);
