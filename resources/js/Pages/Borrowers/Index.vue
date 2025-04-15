@@ -74,7 +74,7 @@ const filter = () => {
                 <tbody>
                     <tr v-for="b in borrowers" :key="b.id" class="even:bg-green-100 dark:even:bg-gray-900" >
                         <td>{{ String(b.id).padStart(8,'0') }}</td>
-                        <td>{{ b.last_name }}, {{ b.barangay }} {{ b.middle_name }}</td>
+                        <td>{{ b.last_name }}, {{ b.first_name }} {{ b.middle_name }}</td>
                         <td>
                             <div class="flex flex-col">
                                 <div>{{ b.address }}</div>
