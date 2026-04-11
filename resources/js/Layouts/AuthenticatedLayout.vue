@@ -6,6 +6,9 @@ import DropdownLink from '@/Components/DropdownLink.vue';
 import NavLink from '@/Components/NavLink.vue';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
 import { Link } from '@inertiajs/vue3';
+import { usePage } from '@inertiajs/vue3'
+
+const page = usePage()
 
 const showingNavigationDropdown = ref(false);
 </script>
@@ -22,8 +25,9 @@ const showingNavigationDropdown = ref(false);
                         <div class="flex">
                             <!-- Logo -->
                             <div class="flex shrink-0 items-center">
-                                <Link :href="route('dashboard')">
-                                    <img src="/images/sower_logo.png" style="width: 50px" alt="">
+                                <Link :href="route('dashboard')" class="flex items-center space-x-4">
+                                    <img src="/images/sower_logo.png" style="width: 50px" alt=""> &nbsp;
+                                    {{ page.props.title }}
                                 </Link>
                             </div>
 
