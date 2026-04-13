@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sower LMS — Local Installation Guide (Windows)</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      font-size: 16px;
+      line-height: 1.7;
+      color: #1e293b;
+      background: #f8fafc;
+    }
+
+    /* ── Layout ── */
+    .page-wrapper {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* ── Sidebar ── */
+    aside {
+      width: 270px;
+      flex-shrink: 0;
+      background: #1e293b;
+      color: #cbd5e1;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow-y: auto;
+      padding: 1.5rem 0;
+    }
+
+    aside .sidebar-title {
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: #64748b;
+      padding: 0 1.5rem 0.75rem;
+    }
+
+    aside nav a {
+      display: block;
+      padding: 0.4rem 1.5rem;
+      color: #94a3b8;
+      text-decoration: none;
+      font-size: 0.88rem;
+      transition: color 0.15s, background 0.15s;
+      border-left: 3px solid transparent;
+    }
+
+    aside nav a:hover {
+      color: #f1f5f9;
+      background: #0f172a;
+      border-left-color: #22c55e;
+    }
+
+    aside nav a.active {
+      color: #f1f5f9;
+      border-left-color: #22c55e;
+      background: rgba(34,197,94,0.08);
+    }
+
+    /* ── Main content ── */
+    main {
+      flex: 1;
+      min-width: 0;
+      padding: 2.5rem 3rem;
+      max-width: 900px;
+    }
+
+    /* ── Hero banner ── */
+    .hero {
+      background: linear-gradient(135deg, #15803d 0%, #166534 100%);
+      color: #fff;
+      border-radius: 12px;
+      padding: 2rem 2.5rem;
+      margin-bottom: 2.5rem;
+    }
+
+    .hero h1 {
+      font-size: 1.9rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.4rem;
+    }
+
+    .hero p {
+      opacity: 0.85;
+      font-size: 1rem;
+    }
+
+    .hero .badge {
+      display: inline-block;
+      background: rgba(255,255,255,0.2);
+      border-radius: 999px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      padding: 0.2rem 0.75rem;
+      margin-top: 0.75rem;
+    }
+
+    /* ── Section headings ── */
+    .section {
+      margin-bottom: 3rem;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 1.25rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid #e2e8f0;
+    }
+
+    .step-number {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 2rem;
+      height: 2rem;
+      border-radius: 50%;
+      background: #15803d;
+      color: #fff;
+      font-size: 0.85rem;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    h2 {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: #0f172a;
+    }
+
+    h3 {
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: #1e293b;
+      margin: 1.25rem 0 0.6rem;
+    }
+
+    p { margin-bottom: 0.85rem; }
+
+    /* ── Lists ── */
+    ul, ol {
+      padding-left: 1.5rem;
+      margin-bottom: 0.85rem;
+    }
+
+    li { margin-bottom: 0.35rem; }
+
+    /* ── Code blocks ── */
+    pre {
+      background: #0f172a;
+      color: #e2e8f0;
+      border-radius: 8px;
+      padding: 1rem 1.25rem;
+      overflow-x: auto;
+      font-size: 0.875rem;
+      font-family: "Cascadia Code", "Fira Code", Consolas, "Courier New", monospace;
+      margin: 0.75rem 0 1rem;
+      line-height: 1.6;
+    }
+
+    code {
+      background: #e2e8f0;
+      color: #0f172a;
+      border-radius: 4px;
+      padding: 0.15rem 0.4rem;
+      font-size: 0.85em;
+      font-family: "Cascadia Code", "Fira Code", Consolas, "Courier New", monospace;
+    }
+
+    pre code {
+      background: none;
+      color: inherit;
+      padding: 0;
+      font-size: inherit;
+    }
+
+    /* ── Callouts ── */
+    .callout {
+      border-radius: 8px;
+      padding: 0.9rem 1.2rem;
+      margin: 1rem 0;
+      font-size: 0.92rem;
+      display: flex;
+      gap: 0.65rem;
+    }
+
+    .callout-icon { font-size: 1.1rem; flex-shrink: 0; margin-top: 1px; }
+
+    .callout.tip   { background: #f0fdf4; border-left: 4px solid #22c55e; color: #166534; }
+    .callout.note  { background: #eff6ff; border-left: 4px solid #3b82f6; color: #1e40af; }
+    .callout.warn  { background: #fffbeb; border-left: 4px solid #f59e0b; color: #92400e; }
+    .callout.danger{ background: #fff1f2; border-left: 4px solid #f43f5e; color: #9f1239; }
+
+    /* ── Connectivity badges ── */
+    .inet-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      background: #fef3c7;
+      color: #92400e;
+      border: 1px solid #fcd34d;
+      border-radius: 999px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 0.2rem 0.7rem;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      white-space: nowrap;
+      margin-left: auto;
+      flex-shrink: 0;
+    }
+
+    .offline-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      background: #f0fdf4;
+      color: #166534;
+      border: 1px solid #86efac;
+      border-radius: 999px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 0.2rem 0.7rem;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    /* ── Tables ── */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 0.75rem 0 1.25rem;
+      font-size: 0.9rem;
+    }
+
+    th {
+      background: #1e293b;
+      color: #f1f5f9;
+      text-align: left;
+      padding: 0.65rem 0.9rem;
+      font-weight: 600;
+    }
+
+    td {
+      padding: 0.6rem 0.9rem;
+      border-bottom: 1px solid #e2e8f0;
+    }
+
+    tr:nth-child(even) td { background: #f8fafc; }
+    tr:last-child td { border-bottom: none; }
+
+    /* ── Checklist ── */
+    .checklist { list-style: none; padding: 0; }
+
+    .checklist li {
+      padding: 0.4rem 0.5rem;
+      display: flex;
+      align-items: flex-start;
+      gap: 0.6rem;
+      border-radius: 6px;
+      font-size: 0.92rem;
+    }
+
+    .checklist li:nth-child(odd) { background: #f8fafc; }
+
+    .checklist li::before {
+      content: "☐";
+      font-size: 1rem;
+      color: #64748b;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    /* ── Troubleshooting cards ── */
+    .trouble-card {
+      background: #fff;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 1rem 1.25rem;
+      margin-bottom: 0.85rem;
+    }
+
+    .trouble-card h4 {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: #dc2626;
+      margin-bottom: 0.4rem;
+    }
+
+    .trouble-card p { margin-bottom: 0; font-size: 0.9rem; }
+
+    /* ── Footer ── */
+    footer {
+      font-size: 0.8rem;
+      color: #94a3b8;
+      text-align: center;
+      padding: 2rem 0 1.5rem;
+      border-top: 1px solid #e2e8f0;
+      margin-top: 2rem;
+    }
+
+    @media(max-width: 768px) {
+      aside { display: none; }
+      main { padding: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="page-wrapper">
+
+  <!-- ══════════════ SIDEBAR ══════════════ -->
+  <aside>
+    <div class="sidebar-title">Table of Contents</div>
+    <nav>
+      <a href="#prerequisites">1. Prerequisites</a>
+      <a href="#xampp">2. Install XAMPP</a>
+      <a href="#composer">3. Install Composer</a>
+      <a href="#nodejs">4. Install Node.js &amp; NPM</a>
+      <a href="#git">5. Install Git</a>
+      <a href="#clone">6. Get the Project Files</a>
+      <a href="#database">7. Create MySQL Database</a>
+      <a href="#env">8. Configure .env File</a>
+      <a href="#php-deps">9. Install PHP Dependencies</a>
+      <a href="#js-deps">10. Install JS Dependencies</a>
+      <a href="#appkey">11. Generate App Key</a>
+      <a href="#migrate">12. Migrations &amp; Seeders</a>
+      <a href="#build">13. Build Frontend Assets</a>
+      <a href="#vhost">14. Apache Virtual Host</a>
+      <a href="#hosts">15. Windows Hosts File</a>
+      <a href="#extensions">16. PHP Extensions</a>
+      <a href="#permissions">17. Directory Permissions</a>
+      <a href="#verify">18. Final Verification</a>
+      <a href="#credentials">19. Default Credentials</a>
+      <a href="#troubleshooting">Troubleshooting</a>
+    </nav>
+  </aside>
+
+  <!-- ══════════════ MAIN ══════════════ -->
+  <main>
+
+    <!-- Hero -->
+    <div class="hero">
+      <h1>Sower LMS</h1>
+      <p>Local Installation Guide for Windows</p>
+      <span class="badge">&#127968; Target URL: http://lms.local</span>
+    </div>
+
+    <!-- Connectivity Legend -->
+    <div style="display:flex;align-items:center;gap:1.25rem;background:#fff;border:1px solid #e2e8f0;border-radius:8px;padding:0.75rem 1.25rem;margin-bottom:2rem;font-size:0.85rem;flex-wrap:wrap;">
+      <strong style="color:#475569;flex-shrink:0;">Legend:</strong>
+      <span style="display:inline-flex;align-items:center;gap:0.5rem;">
+        <span class="inet-badge" style="margin-left:0;">&#127760; Internet Required</span>
+        <span style="color:#64748b;">An active internet connection is needed for this step.</span>
+      </span>
+      <span style="display:inline-flex;align-items:center;gap:0.5rem;">
+        <span class="offline-badge">&#128187; Offline</span>
+        <span style="color:#64748b;">This step can be completed without internet access.</span>
+      </span>
+    </div>
+
+    <!-- ── 1. Prerequisites ── -->
+    <section class="section" id="prerequisites">
+      <div class="section-header">
+        <span class="step-number">1</span>
+        <h2>Prerequisites Overview</h2>
+      </div>
+      <p>Ensure all of the following tools are installed before proceeding with the setup.</p>
+      <table>
+        <thead>
+          <tr>
+            <th>Tool</th>
+            <th>Minimum Version</th>
+            <th>Purpose</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>XAMPP</td><td>8.2.x</td><td>Apache web server + MySQL database</td></tr>
+          <tr><td>PHP</td><td>8.2+</td><td>Server runtime (bundled with XAMPP)</td></tr>
+          <tr><td>Composer</td><td>2.x</td><td>PHP dependency manager</td></tr>
+          <tr><td>Node.js</td><td>18.x LTS or higher</td><td>JavaScript runtime for asset building</td></tr>
+          <tr><td>NPM</td><td>9.x or higher</td><td>JS package manager (bundled with Node.js)</td></tr>
+          <tr><td>Git</td><td>Latest</td><td>Cloning the repository</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ── 2. XAMPP ── -->
+    <section class="section" id="xampp">
+      <div class="section-header">
+        <span class="step-number">2</span>
+        <h2>Install XAMPP</h2>
+        <span class="inet-badge">&#127760; Internet Required</span>
+      </div>
+      <p>XAMPP is an all-in-one package that provides <strong>Apache</strong>, <strong>MySQL</strong>, and <strong>PHP 8.2</strong> — everything needed to serve the app locally.</p>
+      <ol>
+        <li>Go to <a href="https://www.apachefriends.org/download.html" target="_blank">https://www.apachefriends.org/download.html</a></li>
+        <li>Download <strong>XAMPP for Windows – PHP 8.2.x</strong> (pick the latest 8.2.x installer).</li>
+        <li>Run the installer with default settings. When prompted, select at minimum:<br>
+          <strong>&#10003; Apache</strong> &nbsp;&nbsp; <strong>&#10003; MySQL</strong> &nbsp;&nbsp; <strong>&#10003; phpMyAdmin</strong>
+        </li>
+        <li>Install to the default path: <code>C:\xampp</code></li>
+        <li>After installation, open the <strong>XAMPP Control Panel</strong> and click <strong>Start</strong> for both <strong>Apache</strong> and <strong>MySQL</strong>.</li>
+      </ol>
+      <div class="callout tip">
+        <span class="callout-icon">&#128161;</span>
+        <span>Pin the XAMPP Control Panel to your taskbar for easy access during development.</span>
+      </div>
+    </section>
+
+    <!-- ── 3. Composer ── -->
+    <section class="section" id="composer">
+      <div class="section-header">
+        <span class="step-number">3</span>
+        <h2>Install Composer</h2>
+        <span class="inet-badge">&#127760; Internet Required</span>
+      </div>
+      <p>Composer is the PHP package manager used by Laravel to manage all server-side dependencies.</p>
+      <ol>
+        <li>Go to <a href="https://getcomposer.org/download/" target="_blank">https://getcomposer.org/download/</a></li>
+        <li>Download and run <strong>Composer-Setup.exe</strong>.</li>
+        <li>When the installer asks for the PHP executable path, enter:
+          <pre><code>C:\xampp\php\php.exe</code></pre>
+        </li>
+        <li>Complete the installation with default settings.</li>
+        <li>Open a new <strong>Command Prompt</strong> and verify:
+          <pre><code>composer --version</code></pre>
+          Expected output: <code>Composer version 2.x.x ...</code>
+        </li>
+      </ol>
+    </section>
+
+    <!-- ── 4. Node.js ── -->
+    <section class="section" id="nodejs">
+      <div class="section-header">
+        <span class="step-number">4</span>
+        <h2>Install Node.js and NPM</h2>
+        <span class="inet-badge">&#127760; Internet Required</span>
+      </div>
+      <p>Node.js is required to compile the Vue 3 + Vite + Tailwind CSS frontend of this application.</p>
+      <ol>
+        <li>Go to <a href="https://nodejs.org/" target="_blank">https://nodejs.org/</a></li>
+        <li>Download the <strong>LTS</strong> installer (18.x or higher).</li>
+        <li>Run the installer. Ensure the option <strong>"Add to PATH"</strong> is checked.</li>
+        <li>After installation, open a new <strong>Command Prompt</strong> and verify both:
+          <pre><code>node --version
+npm --version</code></pre>
+          Both commands should print version numbers.
+        </li>
+      </ol>
+    </section>
+
+    <!-- ── 5. Git ── -->
+    <section class="section" id="git">
+      <div class="section-header">
+        <span class="step-number">5</span>
+        <h2>Install Git</h2>
+        <span class="inet-badge" title="Only required if using Option B in Step 6">&#127760; Internet Required</span>
+      </div>
+      <p>Git is needed to clone the project repository from source control.</p>
+      <ol>
+        <li>Go to <a href="https://git-scm.com/download/win" target="_blank">https://git-scm.com/download/win</a></li>
+        <li>Download and run the Git installer.</li>
+        <li>Use the recommended defaults. On the <em>"Adjusting your PATH environment"</em> screen, select <strong>"Git from the command line and also from 3rd-party software"</strong>.</li>
+        <li>Verify the installation:
+          <pre><code>git --version</code></pre>
+        </li>
+      </ol>
+    </section>
+
+    <!-- ── 6. Get Project Files ── -->
+    <section class="section" id="clone">
+      <div class="section-header">
+        <span class="step-number">6</span>
+        <h2>Get the Project Files</h2>
+      </div>
+      <p>Choose <strong>one</strong> of the two options below. Both result in the project being available at <code>C:\xampp\htdocs\sower-lms</code>.</p>
+
+      <div style="border:1px solid #e2e8f0;border-radius:8px;padding:1.25rem 1.5rem;margin:1rem 0;background:#fff;">
+        <h3 style="margin-top:0;color:#15803d;">&#128193; Option A &mdash; Copy the Project Folder <span style="font-size:0.78rem;font-weight:500;color:#64748b;">(Recommended if you already have the files)</span></h3>
+        <div style="margin:-0.25rem 0 0.85rem;"><span class="offline-badge">&#128187; No Internet Needed</span></div>
+        <p>Since this installation guide is stored inside the project folder itself, you likely already have all the project files. Simply copy the entire folder into XAMPP's web root.</p>
+        <ol>
+          <li>Locate the project folder on your computer — it is the folder that contains this guide.</li>
+          <li>Copy the entire folder:
+            <ul>
+              <li>Right-click the folder → <strong>Copy</strong> (or <code>Ctrl + C</code>)</li>
+            </ul>
+          </li>
+          <li>Navigate to <code>C:\xampp\htdocs\</code> in File Explorer and paste it:
+            <ul>
+              <li>Right-click → <strong>Paste</strong> (or <code>Ctrl + V</code>)</li>
+            </ul>
+          </li>
+          <li>Rename the folder to <code>sower-lms</code> if it is not already named that.</li>
+        </ol>
+        <p>The final path must be:</p>
+        <pre><code>C:\xampp\htdocs\sower-lms\</code></pre>
+        <ol start="5">
+          <li>Open <strong>Command Prompt</strong> and navigate into the project:
+            <pre><code>cd C:\xampp\htdocs\sower-lms</code></pre>
+          </li>
+        </ol>
+        <div class="callout tip" style="margin-top:0.75rem;margin-bottom:0;">
+          <span class="callout-icon">&#128161;</span>
+          <span>Using this option, <strong>Git is not required</strong> and Step 5 can be skipped.</span>
+        </div>
+      </div>
+
+      <div style="border:1px solid #e2e8f0;border-radius:8px;padding:1.25rem 1.5rem;margin:1rem 0;background:#fff;">
+        <h3 style="margin-top:0;color:#1d4ed8;">&#128279; Option B &mdash; Clone from Git <span style="font-size:0.78rem;font-weight:500;color:#64748b;">(If you have a remote repository)</span></h3>
+        <div style="margin:-0.25rem 0 0.85rem;"><span class="inet-badge" style="margin-left:0;">&#127760; Internet Required</span></div>
+        <ol>
+          <li>Open <strong>Command Prompt</strong> and navigate to XAMPP's htdocs folder:
+            <pre><code>cd C:\xampp\htdocs</code></pre>
+          </li>
+          <li>Clone the repository:
+            <pre><code>git clone &lt;YOUR_REPOSITORY_URL&gt; sower-lms</code></pre>
+            Replace <code>&lt;YOUR_REPOSITORY_URL&gt;</code> with the actual Git remote URL.
+          </li>
+          <li>Enter the project directory:
+            <pre><code>cd sower-lms</code></pre>
+          </li>
+        </ol>
+        <div class="callout note" style="margin-bottom:0;">
+          <span class="callout-icon">&#128221;</span>
+          <span>This option requires Git to be installed (see Step 5).</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── 7. Database ── -->
+    <section class="section" id="database">
+      <div class="section-header">
+        <span class="step-number">7</span>
+        <h2>Create the MySQL Database</h2>
+      </div>
+      <ol>
+        <li>Make sure <strong>MySQL</strong> is running in the XAMPP Control Panel.</li>
+        <li>Open a browser and go to: <a href="http://localhost/phpmyadmin" target="_blank">http://localhost/phpmyadmin</a></li>
+        <li>Click <strong>"New"</strong> in the left sidebar.</li>
+        <li>Enter the database name: <code>sower_lms</code></li>
+        <li>Select Collation: <code>utf8mb4_unicode_ci</code></li>
+        <li>Click <strong>"Create"</strong>.</li>
+      </ol>
+    </section>
+
+    <!-- ── 8. .env ── -->
+    <section class="section" id="env">
+      <div class="section-header">
+        <span class="step-number">8</span>
+        <h2>Configure the Environment File</h2>
+      </div>
+      <p>The <code>.env</code> file holds all environment-specific settings such as the database connection and app URL.</p>
+      <ol>
+        <li>In the project directory, copy the example environment file:
+          <pre><code>copy .env.example .env</code></pre>
+        </li>
+        <li>Open <code>.env</code> with a text editor and update the following values:
+          <pre><code>APP_NAME="Sower LMS"
+APP_ENV=local
+APP_DEBUG=true
+APP_URL=http://lms.local
+
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=sower_lms
+DB_USERNAME=root
+DB_PASSWORD=</code></pre>
+        </li>
+        <li>Save the file.</li>
+      </ol>
+      <div class="callout note">
+        <span class="callout-icon">&#128221;</span>
+        <span>XAMPP's default MySQL <code>root</code> user has <strong>no password</strong>. Leave <code>DB_PASSWORD</code> empty unless you've set one manually via phpMyAdmin.</span>
+      </div>
+    </section>
+
+    <!-- ── 9. PHP Deps ── -->
+    <section class="section" id="php-deps">
+      <div class="section-header">
+        <span class="step-number">9</span>
+        <h2>Install PHP Dependencies</h2>
+        <span class="inet-badge" title="Composer downloads packages from the Packagist registry">&#127760; Internet Required</span>
+      </div>
+      <p>Run Composer to download all Laravel packages and server-side dependencies into the <code>vendor/</code> directory.</p>
+      <pre><code>cd C:\xampp\htdocs\sower-lms
+composer install</code></pre>
+      <p>This may take a few minutes on the first run.</p>
+    </section>
+
+    <!-- ── 10. JS Deps ── -->
+    <section class="section" id="js-deps">
+      <div class="section-header">
+        <span class="step-number">10</span>
+        <h2>Install JavaScript Dependencies</h2>
+        <span class="inet-badge" title="NPM downloads packages from the npm registry">&#127760; Internet Required</span>
+      </div>
+      <p>Install all Node.js packages (Vue 3, Vite, Tailwind CSS, FontAwesome, etc.):</p>
+      <pre><code>npm install</code></pre>
+    </section>
+
+    <!-- ── 11. App Key ── -->
+    <section class="section" id="appkey">
+      <div class="section-header">
+        <span class="step-number">11</span>
+        <h2>Generate Application Key</h2>
+      </div>
+      <p>Laravel requires a unique 32-character key used to encrypt session data and other sensitive values. Generate it with:</p>
+      <pre><code>php artisan key:generate</code></pre>
+      <p>This command automatically writes the key to the <code>APP_KEY=</code> field in your <code>.env</code> file.</p>
+    </section>
+
+    <!-- ── 12. Migrate ── -->
+    <section class="section" id="migrate">
+      <div class="section-header">
+        <span class="step-number">12</span>
+        <h2>Run Migrations and Seeders</h2>
+      </div>
+      <p>Create all database tables and populate them with initial data.</p>
+
+      <h3>Run Migrations</h3>
+      <pre><code>php artisan migrate</code></pre>
+      <p>This creates the following tables:</p>
+      <ul>
+        <li><code>users</code> — Application user accounts</li>
+        <li><code>borrowers</code> — Loan borrower records</li>
+        <li><code>categories</code> — Loan categories</li>
+        <li><code>loan_plans</code> — Loan plan definitions</li>
+        <li><code>loans</code> — Loan records</li>
+        <li><code>payment_schedules</code> — Scheduled payment entries</li>
+        <li><code>payments</code> — Payment transactions</li>
+        <li><code>loan_payments</code> — Loan payment linkages</li>
+        <li><code>penalties</code> — Penalty records</li>
+        <li><code>penalty_payments</code> — Penalty payment transactions</li>
+        <li><code>roles</code>, <code>permissions</code>, and related Spatie tables</li>
+      </ul>
+
+      <h3>Run Seeders</h3>
+      <pre><code>php artisan db:seed</code></pre>
+      <p>This creates the default user accounts, permissions, and loan categories required to use the application immediately after setup.</p>
+    </section>
+
+    <!-- ── 13. Build ── -->
+    <section class="section" id="build">
+      <div class="section-header">
+        <span class="step-number">13</span>
+        <h2>Build Frontend Assets</h2>
+      </div>
+      <p>Compile the Vue 3 + Tailwind CSS + FontAwesome front-end into production-ready static files:</p>
+      <pre><code>npm run build</code></pre>
+      <p>After completion, the compiled assets will be placed in the <code>public/build/</code> directory and served by Apache.</p>
+    </section>
+
+    <!-- ── 14. Virtual Host ── -->
+    <section class="section" id="vhost">
+      <div class="section-header">
+        <span class="step-number">14</span>
+        <h2>Configure Apache Virtual Host</h2>
+      </div>
+      <p>A virtual host entry tells Apache to serve the application at <code>http://lms.local</code>.</p>
+
+      <h3>14.1 — Enable Virtual Hosts in Apache</h3>
+      <ol>
+        <li>Open the file: <code>C:\xampp\apache\conf\httpd.conf</code></li>
+        <li>Find the following line and <strong>remove the <code>#</code></strong> to uncomment it:
+          <pre><code># Include conf/extra/httpd-vhosts.conf</code></pre>
+          It should look like:
+          <pre><code>Include conf/extra/httpd-vhosts.conf</code></pre>
+        </li>
+        <li>Save the file.</li>
+      </ol>
+
+      <h3>14.2 — Add the Virtual Host Entry</h3>
+      <ol>
+        <li>Open the file: <code>C:\xampp\apache\conf\extra\httpd-vhosts.conf</code></li>
+        <li>Scroll to the bottom and add the following block:
+          <pre><code>&lt;VirtualHost *:80&gt;
+    ServerName lms.local
+    DocumentRoot "C:/xampp/htdocs/sower-lms/public"
+    &lt;Directory "C:/xampp/htdocs/sower-lms/public"&gt;
+        Options Indexes FollowSymLinks MultiViews
+        AllowOverride All
+        Require all granted
+    &lt;/Directory&gt;
+    ErrorLog "C:/xampp/logs/lms-error.log"
+    CustomLog "C:/xampp/logs/lms-access.log" combined
+&lt;/VirtualHost&gt;</code></pre>
+        </li>
+        <li>Save the file.</li>
+      </ol>
+
+      <h3>14.3 — Enable mod_rewrite</h3>
+      <p>Laravel requires Apache's URL rewriting module.</p>
+      <ol>
+        <li>Open <code>C:\xampp\apache\conf\httpd.conf</code>.</li>
+        <li>Find the following line and ensure it is <strong>uncommented</strong>:
+          <pre><code>LoadModule rewrite_module modules/mod_rewrite.so</code></pre>
+        </li>
+        <li>Save and close the file.</li>
+      </ol>
+
+      <h3>14.4 — Restart Apache</h3>
+      <p>In the XAMPP Control Panel, click <strong>Stop</strong> then <strong>Start</strong> for Apache to apply all changes.</p>
+    </section>
+
+    <!-- ── 15. Hosts ── -->
+    <section class="section" id="hosts">
+      <div class="section-header">
+        <span class="step-number">15</span>
+        <h2>Edit the Windows Hosts File</h2>
+      </div>
+      <p>The Windows hosts file maps the custom domain <code>lms.local</code> to your local machine's loopback address.</p>
+      <ol>
+        <li>Press the <strong>Windows key</strong>, type <code>Notepad</code>, then right-click it and select <strong>"Run as administrator"</strong>.</li>
+        <li>In Notepad, open:
+          <pre><code>C:\Windows\System32\drivers\etc\hosts</code></pre>
+        </li>
+        <li>Scroll to the bottom and add:
+          <pre><code>127.0.0.1   lms.local</code></pre>
+        </li>
+        <li>Save the file. <em>(Administrator privileges are required to save.)</em></li>
+      </ol>
+      <div class="callout warn">
+        <span class="callout-icon">&#9888;&#65039;</span>
+        <span>If you cannot save the hosts file, make sure Notepad was opened as Administrator. You can also try disabling antivirus software temporarily if it blocks the save.</span>
+      </div>
+    </section>
+
+    <!-- ── 16. PHP Extensions ── -->
+    <section class="section" id="extensions">
+      <div class="section-header">
+        <span class="step-number">16</span>
+        <h2>Enable PHP Extensions</h2>
+      </div>
+      <p>Some PHP extensions required by Laravel may be disabled by default in XAMPP's configuration.</p>
+      <ol>
+        <li>Open the file: <code>C:\xampp\php\php.ini</code></li>
+        <li>Search for and <strong>uncomment</strong> (remove the leading <code>;</code>) the following lines:
+          <pre><code>extension=pdo_mysql
+extension=mbstring
+extension=openssl
+extension=tokenizer
+extension=xml
+extension=ctype
+extension=json
+extension=curl
+extension=fileinfo
+extension=zip</code></pre>
+        </li>
+        <li>Save <code>php.ini</code>.</li>
+        <li>Restart Apache in the XAMPP Control Panel.</li>
+      </ol>
+    </section>
+
+    <!-- ── 17. Permissions ── -->
+    <section class="section" id="permissions">
+      <div class="section-header">
+        <span class="step-number">17</span>
+        <h2>Set Directory Permissions</h2>
+      </div>
+      <p>Laravel needs write access to the <code>storage</code> and <code>bootstrap/cache</code> directories to write logs, compiled views, and cache files.</p>
+      <p>Windows/XAMPP is generally permissive, but if you encounter a permissions error:</p>
+      <ol>
+        <li>In File Explorer, navigate to <code>C:\xampp\htdocs\sower-lms</code>.</li>
+        <li>Right-click the <code>storage</code> folder → <strong>Properties</strong> → <strong>Security</strong> tab.</li>
+        <li>Ensure the current user has <strong>Full control</strong> or at least <strong>Modify</strong> access.</li>
+        <li>Repeat for the <code>bootstrap\cache</code> folder.</li>
+      </ol>
+      <p>You can also clear all stale caches from Command Prompt:</p>
+      <pre><code>php artisan cache:clear
+php artisan config:clear
+php artisan route:clear
+php artisan view:clear</code></pre>
+    </section>
+
+    <!-- ── 18. Verify ── -->
+    <section class="section" id="verify">
+      <div class="section-header">
+        <span class="step-number">18</span>
+        <h2>Final Verification</h2>
+      </div>
+      <p>Before opening the browser, confirm all steps are complete using the checklist below.</p>
+      <ul class="checklist">
+        <li>XAMPP Apache is running (green indicator in Control Panel)</li>
+        <li>XAMPP MySQL is running (green indicator in Control Panel)</li>
+        <li><code>.env</code> file exists with correct <code>DB_*</code> settings and <code>APP_URL=http://lms.local</code></li>
+        <li><code>vendor/</code> directory exists (Composer install completed)</li>
+        <li><code>node_modules/</code> directory exists (npm install completed)</li>
+        <li><code>public/build/</code> directory exists (npm run build completed)</li>
+        <li><code>APP_KEY</code> is set in <code>.env</code> (artisan key:generate completed)</li>
+        <li>Database <code>sower_lms</code> exists in MySQL / phpMyAdmin</li>
+        <li>Migrations ran without errors</li>
+        <li>Seeders ran without errors</li>
+        <li>Apache virtual host is configured in <code>httpd-vhosts.conf</code></li>
+        <li>Windows hosts file has <code>127.0.0.1 lms.local</code> entry</li>
+        <li><code>mod_rewrite</code> is enabled in <code>httpd.conf</code></li>
+      </ul>
+
+      <h3>Open the Application</h3>
+      <p>Open a browser and navigate to:</p>
+      <pre><code>http://lms.local</code></pre>
+      <p>You should see the <strong>Sower LMS login page</strong>.</p>
+    </section>
+
+    <!-- ── 19. Credentials ── -->
+    <section class="section" id="credentials">
+      <div class="section-header">
+        <span class="step-number">19</span>
+        <h2>Default Login Credentials</h2>
+      </div>
+      <p>The database seeder creates the following default accounts:</p>
+      <table>
+        <thead>
+          <tr>
+            <th>Full Name</th>
+            <th>Username</th>
+            <th>Email</th>
+            <th>Password</th>
+            <th>Permissions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Benjie B. Lenteria</td>
+            <td><code>lentrix</code></td>
+            <td>lentrix@materdeicollege.com</td>
+            <td><code>password</code></td>
+            <td>manage users, manage system</td>
+          </tr>
+          <tr>
+            <td>Rowerna Lauron</td>
+            <td><code>ahwen</code></td>
+            <td>ahwen@email.com</td>
+            <td><code>password</code></td>
+            <td>manage users, manage system</td>
+          </tr>
+          <tr>
+            <td>Clerk 1</td>
+            <td><code>clerk1</code></td>
+            <td>clerk@sower.com</td>
+            <td><code>password</code></td>
+            <td>—</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="callout danger">
+        <span class="callout-icon">&#128274;</span>
+        <span><strong>Security Notice:</strong> Change all default passwords immediately after your first login, especially in any environment accessible to other people.</span>
+      </div>
+    </section>
+
+    <!-- ── Troubleshooting ── -->
+    <section class="section" id="troubleshooting">
+      <div class="section-header">
+        <span class="step-number" style="background:#dc2626;">!</span>
+        <h2>Troubleshooting</h2>
+      </div>
+
+      <div class="trouble-card">
+        <h4>"No application encryption key has been specified"</h4>
+        <p>Run <code>php artisan key:generate</code> and make sure <code>APP_KEY</code> is populated in <code>.env</code>.</p>
+      </div>
+
+      <div class="trouble-card">
+        <h4>"SQLSTATE[HY000] [1049] Unknown database 'sower_lms'"</h4>
+        <p>Create the database in phpMyAdmin first, then re-run <code>php artisan migrate</code>.</p>
+      </div>
+
+      <div class="trouble-card">
+        <h4>"Class 'PDO' not found" or MySQL connection errors</h4>
+        <p>Enable <code>extension=pdo_mysql</code> in <code>C:\xampp\php\php.ini</code> and restart Apache.</p>
+      </div>
+
+      <div class="trouble-card">
+        <h4>Apache won't start (port 80 conflict)</h4>
+        <p>Port 80 may be in use by IIS, Skype, or another service. In XAMPP Control Panel → Config → Apache → <code>httpd.conf</code>, change <code>Listen 80</code> to an alternate port, or stop the conflicting application.</p>
+      </div>
+
+      <div class="trouble-card">
+        <h4>"mix: Vite manifest not found" / blank white page</h4>
+        <p>Run <code>npm run build</code> to generate the compiled assets in <code>public/build/</code>.</p>
+      </div>
+
+      <div class="trouble-card">
+        <h4>500 Internal Server Error</h4>
+        <p>Open <code>storage/logs/laravel.log</code> to read the detailed error message and trace the exact cause.</p>
+      </div>
+
+      <div class="trouble-card">
+        <h4>Virtual host not loading (shows XAMPP default page instead)</h4>
+        <p>Ensure the <code>Include conf/extra/httpd-vhosts.conf</code> line in <code>httpd.conf</code> is uncommented and Apache was fully restarted after the change.</p>
+      </div>
+
+      <div class="trouble-card">
+        <h4>Changes to .env are not reflected</h4>
+        <p>Run <code>php artisan config:clear</code> to clear the configuration cache and force Laravel to re-read the <code>.env</code> file.</p>
+      </div>
+    </section>
+
+    <footer>
+      Sower LMS &mdash; Installation Guide &mdash; Last updated April 2026
+    </footer>
+
+  </main>
+</div>
+
+</body>
+</html>
