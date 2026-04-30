@@ -34,7 +34,7 @@ class LoanController extends Controller
             'ref_no' => 'string|required',
             'category_id' => 'numeric|required',
             'plan' => 'required',
-            'amount' => 'numeric|required',
+            'amount' => ['required', 'regex:/^[\d,]+(\.[\d]+)?$/'],
             'transaction_fee'=>'numeric|required',
         ]);
 
@@ -66,7 +66,7 @@ class LoanController extends Controller
             'loan_plan_id'      => $plan->id,
             'borrower_id'       => $request->borrower_id,
             'purpose'           => $request->purpose,
-            'amount'            => $request->amount,
+            'amount'            => $amount,
             'transaction_fee'   => $request->transaction_fee,
             'status'            => 0
         ]);

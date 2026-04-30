@@ -29,7 +29,7 @@ const form = useForm({
 })
 
 const submit = () => {
-    form.post('/loans/')
+    form.post('/loans')
 }
 
 const selectedCategory = ref(null)
