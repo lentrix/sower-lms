@@ -227,7 +227,10 @@ class LoanController extends Controller
 
     public function paymentHistory(Loan $loan) {
 
-        $loan->load('payments');
+        $loan->load([
+            'payments' => fn($q) => $q->orderBy('date')->orderBy('id'),
+            'payments.loanPayments'
+        ]);
 
         return inertia('Borrowers/LoanPaymentHistory',[
             'loan' => $loan,

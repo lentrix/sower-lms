@@ -33,6 +33,7 @@ class HandleInertiaRequests extends Middleware
             ...parent::share($request),
             'auth' => [
                 'user' => $request->user(),
+                'permissions' => fn () => $request->user()?->getAllPermissions()->pluck('name') ?? [],
             ],
             'title' => env('APP_NAME', 'Sower LMS'),
             'alerts' => [

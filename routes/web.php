@@ -4,6 +4,7 @@ use App\Http\Controllers\BorrowerController;
 use App\Http\Controllers\LoanController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\SystemLogController;
 use App\Http\Controllers\ReportsController;
 use App\Http\Controllers\UserController;
 use App\Models\DashboardController;
@@ -59,6 +60,12 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    Route::group(['middleware'=>['can:manage system']], function(){
+        Route::put('/payments/{payment}', [PaymentController::class, 'update'])->name('payments.update');
+        Route::delete('/payments/{payment}', [PaymentController::class, 'destroy'])->name('payments.destroy');
+        Route::get('/system-logs', [SystemLogController::class, 'index'])->name('system-logs');
+    });
 
     Route::group(['middleware'=>['can:manage users']], function(){
         Route::put('/users/{user}', [UserController::class, 'update']);

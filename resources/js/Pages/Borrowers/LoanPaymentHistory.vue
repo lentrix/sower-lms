@@ -3,13 +3,41 @@ import BorrowerDetails from '@/Components/BorrowerDetails.vue';
 import LoanTable from '@/Components/LoanTable.vue';
 import PageContent from '@/Components/PageContent.vue';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { Head, Link } from '@inertiajs/vue3';
+import { Head, Link, usePage } from '@inertiajs/vue3';
+import { computed, ref, watch } from 'vue';
+import { useToast } from 'vue-toastification';
+import EditPaymentModal from './EditPaymentModal.vue';
+import DeletePaymentModal from './DeletePaymentModal.vue';
 
 
 const props = defineProps({
     loan: Object,
-    loanHistory: Array
+    loanHistory: Array,
+    alerts: Object
 })
+
+const toast = useToast()
+
+watch(()=>props.alerts, () => {
+    if(props.alerts.success) toast.success(props.alerts.success)
+    if(props.alerts.error) toast.error(props.alerts.error)
+})
+
+const canManageSystem = computed(() => usePage().props.auth.permissions?.includes('manage system'))
+
+const selectedPayment = ref(null)
+const showEditModal = ref(false)
+const showDeleteModal = ref(false)
+
+const editPayment = (pmt) => {
+    selectedPayment.value = pmt
+    showEditModal.value = true
+}
+
+const deletePayment = (pmt) => {
+    selectedPayment.value = pmt
+    showDeleteModal.value = true
+}
 
 const formattedDate = (dateStr, monthFormat="long") => {
     const date = new Date(dateStr)
@@ -28,6 +56,18 @@ const money = Intl.NumberFormat('en-PH',{style: 'currency', currency:"php"})
 <template>
 
     <Head title="View Borrower" />
+
+    <EditPaymentModal
+        :payment="selectedPayment"
+        :show="showEditModal"
+        @close="showEditModal=false"
+    />
+
+    <DeletePaymentModal
+        :payment="selectedPayment"
+        :show="showDeleteModal"
+        @close="showDeleteModal=false"
+    />
 
     <AuthenticatedLayout>
         <PageContent>
@@ -62,14 +102,33 @@ const money = Intl.NumberFormat('en-PH',{style: 'currency', currency:"php"})
                                     <tr>
                                         <th>Date</th>
                                         <th>OR Number</th>
+                                        <th class="text-right">Interest Paid</th>
+                                        <th class="text-right">Principal Paid</th>
                                         <td class="font-bold text-right">Amount</td>
+                                        <th v-if="canManageSystem" class="text-center">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr v-for="pmt in loan.payments">
+                                    <tr v-for="pmt in loan.payments" :key="pmt.id">
                                         <td>{{ formattedDate(pmt.date) }}</td>
                                         <td>{{ pmt.or_number }}</td>
+                                        <td class="text-right">{{ money.format(pmt.loan_payments.reduce((s, lp) => s + lp.interest, 0)) }}</td>
+                                        <td class="text-right">{{ money.format(pmt.loan_payments.reduce((s, lp) => s + lp.principal, 0)) }}</td>
                                         <td class="text-right">{{ money.format(pmt.amount) }}</td>
+                                        <td v-if="canManageSystem">
+                                            <div class="flex gap-2 justify-center">
+                                                <button type="button" title="Edit this payment."
+                                                    class="px-3 py-1 text-white bg-blue-700 rounded"
+                                                    @click="editPayment(pmt)">
+                                                    <font-awesome-icon icon="fa-solid fa-edit"></font-awesome-icon>
+                                                </button>
+                                                <button type="button" title="Delete this payment."
+                                                    class="px-3 py-1 text-white bg-red-700 rounded"
+                                                    @click="deletePayment(pmt)">
+                                                    <font-awesome-icon icon="fa-solid fa-trash-can"></font-awesome-icon>
+                                                </button>
+                                            </div>
+                                        </td>
                                     </tr>
                                 </tbody>
                             </table>

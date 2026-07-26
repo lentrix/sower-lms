@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import ApplicationLogo from '@/Components/ApplicationLogo.vue';
 import Dropdown from '@/Components/Dropdown.vue';
 import DropdownLink from '@/Components/DropdownLink.vue';
@@ -11,6 +11,8 @@ import { usePage } from '@inertiajs/vue3'
 const page = usePage()
 
 const showingNavigationDropdown = ref(false);
+
+const canManageSystem = computed(() => page.props.auth.permissions?.includes('manage system'))
 </script>
 
 <template>
@@ -58,6 +60,10 @@ const showingNavigationDropdown = ref(false);
                                 <NavLink :href="route('users')" :active="$page.url.startsWith('/users')">
                                     <font-awesome-icon icon="fa-solid fa-people-group"></font-awesome-icon>
                                     &nbsp;Users
+                                </NavLink>
+                                <NavLink v-if="canManageSystem" :href="route('system-logs')" :active="$page.url.startsWith('/system-logs')">
+                                    <font-awesome-icon icon="fa-solid fa-gear"></font-awesome-icon>
+                                    &nbsp;System Logs
                                 </NavLink>
                             </div>
                         </div>
