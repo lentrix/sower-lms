@@ -8,6 +8,7 @@ use App\Models\LoanPayment;
 use App\Models\Payment;
 use App\Models\PenaltyPayment;
 use App\Models\SystemLog;
+use App\Services\PenaltyAssessor;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -35,7 +36,12 @@ class PaymentController extends Controller
         ]);
     }
 
-    public function pay(Borrower $borrower) {
+    public function pay(Borrower $borrower, PenaltyAssessor $assessor) {
+
+        // Assess before reading payablePenalties - the teller is about to be
+        // shown a figure the next payment will be allocated against.
+        if($borrower->activeLoan) $assessor->assess($borrower->activeLoan);
+
         $payees = DB::table('borrowers')->select('id', 'last_name','first_name','middle_name')->get();
         $payments = Payment::orderBy('created_at','DESC')->limit(50)->get()->map(function($pmt) {
             return [
@@ -50,7 +56,7 @@ class PaymentController extends Controller
             'payees' => $payees,
             'selectedPayee' => $borrower,
             'payablePenalties' => [
-                'total' => $borrower->activeLoan->payablePenalties->sum('amount'),
+                'total' => $borrower->activeLoan->payablePenalties->sum('balance'),
                 'count' => $borrower->activeLoan->payablePenalties->count()
             ],
             'unPaidSchedules' => [
@@ -64,11 +70,16 @@ class PaymentController extends Controller
 
     public function store(Request $request) {
 
-        $loan = Loan::findOrFail($request->loan_id);
-        $amountToPay = $request->amount_paid;
-        $orNo = $request->or_number;
+        $validated = $request->validate([
+            'loan_id' => 'required|exists:loans,id',
+            'amount_paid' => 'required|numeric|min:0.01',
+            'or_number' => 'nullable|string|max:25',
+            'date' => 'required|date',
+        ]);
 
-        Payment::pay($loan, $amountToPay, $orNo, $request->date);
+        $loan = Loan::findOrFail($validated['loan_id']);
+
+        Payment::pay($loan, $validated['amount_paid'], $validated['or_number'] ?? null, $validated['date']);
 
         return redirect('/borrowers/' . $loan->borrower_id)->with('success','Payment has been recorded successfully!');
     }

@@ -29,6 +29,7 @@
 17. [Set Directory Permissions](#17-set-directory-permissions)
 18. [Final Verification](#18-final-verification)
 19. [Default Login Credentials](#19-default-login-credentials)
+20. [Penalty Assessment (Optional Scheduler)](#20-penalty-assessment-optional-scheduler)
 
 ---
 
@@ -481,6 +482,54 @@ The database seeder creates the following default accounts:
 > **Security Notice:** Change all default passwords immediately after the first login, especially in any environment accessible to others.
 
 ---
+
+## 20. Penalty Assessment (Optional Scheduler)
+
+**The application does not need a scheduler.** Penalties are assessed by the app
+itself while staff are using it: the first authenticated page load of each day runs
+the assessment, and individual accounts are re-checked whenever a borrower page or
+payment page is opened. This is deliberate — the office PC is powered off overnight,
+so any task scheduled for the early hours would never actually fire.
+
+### 20.1 — Enable Penalty Assessment
+
+Automatic assessment is **switched off by default**. Nothing is charged until a
+cutover date is set in `.env`:
+
+```
+PENALTY_ASSESSMENT_START_DATE=2026-09-01
+```
+
+Loans released *before* this date are never assessed automatically. This protects
+accounts carried over from the previous system, whose payment records are known to
+be incomplete — assessing those automatically would charge borrowers for payments
+they had actually made. Those accounts are handled individually instead, through the
+**Assess Penalties** button on the borrower page (requires the *manage system*
+permission), which lists every affected payment schedule for review before anything
+is charged.
+
+The dashboard shows the current state, including a warning while assessment is not
+enabled or has not run recently.
+
+### 20.2 — Optional: Windows Task Scheduler Backstop
+
+Not required. Add this only if the app should also assess penalties on days nobody
+logs in.
+
+1. Open **Task Scheduler** → **Create Task**
+2. **General:** name it `Sower LMS Scheduler`, select *Run whether user is logged on or not*
+3. **Triggers:** New → *Daily*, then set **Repeat task every 1 minute** for a duration of *Indefinitely*
+4. **Actions:** New → *Start a program*
+   - Program: `C:\xampp\php\php.exe`
+   - Arguments: `artisan schedule:run`
+   - Start in: `C:\xampp\htdocs\sower-lms`
+5. **Conditions:** untick *Start the task only if the computer is on AC power*
+
+> This will not run while the computer is switched off. It is a backstop, not the
+> primary mechanism — the app assesses penalties on its own during normal use.
+
+---
+
 
 ## Troubleshooting
 

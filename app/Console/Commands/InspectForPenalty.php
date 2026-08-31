@@ -2,8 +2,7 @@
 
 namespace App\Console\Commands;
 
-use App\Models\PaymentSchedule;
-use Carbon\Carbon;
+use App\Services\PenaltyAssessor;
 use Illuminate\Console\Command;
 
 class InspectForPenalty extends Command
@@ -13,92 +12,64 @@ class InspectForPenalty extends Command
      *
      * @var string
      */
-    protected $signature = 'inspect-for-penalty {code}';
+    protected $signature = 'inspect-for-penalty {code} {--dry-run : List what would be imposed without writing anything} {--ignore-cutover : Assess loans released before the cutover date too}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Inspects payments schedules and impose penalties when applicable Code: 1 - Bi-monthly, Code: 2 - Weekly and Arawan, Code: 3 - All';
+    protected $description = 'Imposes penalties on payment schedules left unsettled beyond their plan\'s grace period. Code: 1 - Bi-monthly, Code: 2 - Weekly and Arawan, Code: 3 - All';
 
     /**
-     * Execute the console command.
+     * The plan types each {code} covers, kept for backwards compatibility with
+     * the original command.
      */
-    public function handle()
+    private function planTypesFor(string $code): array {
+        return match($code) {
+            '1' => [PenaltyAssessor::BI_MONTHLY],
+            '2' => [PenaltyAssessor::WEEKLY, PenaltyAssessor::ARAWAN],
+            default => [PenaltyAssessor::BI_MONTHLY, PenaltyAssessor::WEEKLY, PenaltyAssessor::ARAWAN],
+        };
+    }
+
+    public function handle(PenaltyAssessor $assessor)
     {
-        $code = $this->argument('code');
+        $planTypes = $this->planTypesFor((string) $this->argument('code'));
+        $ignoreCutover = (bool) $this->option('ignore-cutover');
 
-        $today = Carbon::now();
-
-        /**
-         * Bi-Monthly
-         * Check all payment schedules with bi-monthly loan types
-         * which are unpaid and whose due date is past today
-         * but only if today is 5th or 20th of the month
-         * or 6th or 21th if 5th or 20th falls on a Sunday
-         */
-        if($code==1 || $code==3) {
-            if( (($today->day == 5 || $today->day == 20) && $today->dayOfWeek!=0) || (($today->day==6 || $today->day==21) && $today->dayOfWeek==1) || true ){
-
-                $scheds = PaymentSchedule::whereHas('loan', function($q1) {
-                    $q1->whereHas('loanPlan', function($q2) {
-                        $q2->where('plan_type', 3);
-                    });
-                })->where('due_date','<', $today)
-                ->whereDoesntHave('penalty')
-                ->whereDoesntHave('loanPayments')->get();
-
-                $n = 0;
-                foreach($scheds as $sched) {
-                    $sched->imposePenalty();
-                }
-
-            }
-
+        if(!$ignoreCutover && !$assessor->isAutomaticAssessmentEnabled()) {
+            $this->warn('Automatic penalty assessment is disabled - PENALTY_ASSESSMENT_START_DATE is not set.');
+            $this->line('Nothing was assessed. Set that date, or re-run with --ignore-cutover to assess regardless.');
+            return self::SUCCESS;
         }
 
-        if($code==2 || $code==3) {
+        if($this->option('dry-run')) {
+            $candidates = $assessor->candidates(null, $ignoreCutover, $planTypes);
 
-            /**
-             * For Weekly Loan types. Check payment schedules
-             * which are not yet paid whose due date is
-             * two weeks ago.
-             */
-            $twoWeeksAgo = $today->subDays(14);
-            if($twoWeeksAgo->dayOfWeek==0) $twoWeeksAgo->addDay();
-
-            $wscheds = PaymentSchedule::whereHas('loan', function($q1) {
-                $q1->whereHas('loanPlan', function($q2) {
-                    $q2->where('plan_type', 2);
-                });
-            })->where('due_date','<', $twoWeeksAgo)
-            ->whereDoesntHave('penalty')
-            ->whereDoesntHave('loanPayments')->get();
-
-            foreach($wscheds as $sched) {
-                $sched->imposePenalty();
+            $total = 0;
+            foreach($candidates as $schedule) {
+                $total += $assessor->penaltyAmountFor($schedule);
             }
 
-            /**
-             * For Daily Loan Types. Check payment schedules whose
-             * loan account has a release date of 56 days ago
-             */
+            $this->info(sprintf(
+                'Dry run: %d payment schedule(s) would be penalized, totalling %s. Nothing was written.',
+                $candidates->count(),
+                number_format($total, 2)
+            ));
 
-            $fiftySixDaysAgo = Carbon::now()->subDays(56);
-            if($fiftySixDaysAgo->dayOfWeek==0) $fiftySixDaysAgo->addDay();
-
-            $dscheds = PaymentSchedule::whereHas('loan', function($q1) use ($fiftySixDaysAgo) {
-                $q1->whereHas('loanPlan', function($q2) {
-                    $q2->where('plan_type', 1);
-                })->where('released_at','<',$fiftySixDaysAgo);
-            })
-            ->whereDoesntHave('penalty')
-            ->whereDoesntHave('loanPayments')->get();
-
-            foreach($dscheds as $sched) {
-                $sched->imposePenalty();
-            }
+            return self::SUCCESS;
         }
+
+        $result = $assessor->assess(null, null, $ignoreCutover, $planTypes);
+
+        $this->info(sprintf(
+            'Imposed %d penalt%s totalling %s.',
+            $result['count'],
+            $result['count'] == 1 ? 'y' : 'ies',
+            number_format($result['total'], 2)
+        ));
+
+        return self::SUCCESS;
     }
 }

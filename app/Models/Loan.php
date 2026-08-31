@@ -143,31 +143,16 @@ class Loan extends Model
         }
     }
 
-    public function generatePenalty() {
-        $unPaidSchedules = $this->getUnpaidSchedules();
-
-        $totalPenalty = 0;
-        foreach($unPaidSchedules as $up) {
-            $penaltyAmount = $up->amount_due * ($this->loanPlan->penalty/100);
-
-            if($penaltyAmount==0) continue;
-
-            Penalty::create([
-                'payment_schedule_id' => $up->id,
-                'amount' => $penaltyAmount
-            ]);
-
-            $totalPenalty += $penaltyAmount;
-        }
-
-        return $totalPenalty;
-    }
-
+    /**
+     * Penalties of this loan that still carry a balance, as
+     * ['penalty' => Penalty, 'balance' => float] entries.
+     *
+     * Delegates to getUnsettledPenalties() so that what is displayed to the
+     * teller is exactly what Payment::allocate() will consume - a partially
+     * paid penalty must keep showing its remainder.
+     */
     public function getPayablePenaltiesAttribute() {
-        return Penalty::whereHas('paymentSchedule', function($q) {
-            $q->where('loan_id', $this->id);
-        })->whereDoesntHave('penaltyPayments')
-        ->get();
+        return collect($this->getUnsettledPenalties());
     }
 
     //All unpaide dues regardless of due date

@@ -6,6 +6,7 @@ import { defineProps, ref, computed, watch, onMounted } from 'vue';
 import { useToast } from "vue-toastification";
 import LoanTable from '@/Components/LoanTable.vue';
 import RemovePenaltyModal from './RemovePenaltyModal.vue';
+import AssessPenaltiesModal from './AssessPenaltiesModal.vue';
 import Modal from '@/Components/Modal.vue';
 import BorrowerDetails from '@/Components/BorrowerDetails.vue';
 
@@ -18,8 +19,12 @@ const props = defineProps({
     totalPenalty: null,
     totalLoanPayment: null,
     totalPenaltyPayment: null,
-    loanHistory: null
+    loanHistory: null,
+    canAssessPenalties: false
 })
+
+const page = usePage()
+const canManageSystem = computed(() => page.props.auth.permissions?.includes('manage system'))
 
 const toast = useToast();
 
@@ -50,6 +55,8 @@ const removePenalty = (paymentSched) => {
     selectedPaymentSchedule.value = paymentSched
     showRemovePenaltyModal.value = true
 }
+
+const showAssessPenaltiesModal = ref(false)
 
 const showRebuildModal = ref(false)
 
@@ -109,10 +116,20 @@ const rebuild = () => {
                             <div class="flex-1">
                                 <div class="flex justify-between items-center my-3">
                                     <h5 class="text-xl">Payment Schedule</h5>
-                                    <button class="px-2 text-red-700 bg-red-300 rounded border-red-900" @click="showRebuildModal=true">
-                                        <font-awesome-icon icon="fa-solid fa-arrows-rotate"></font-awesome-icon>
-                                        Rebuild Pmt Sched
-                                    </button>
+                                    <div class="flex gap-2">
+                                        <button
+                                            v-if="canManageSystem && canAssessPenalties"
+                                            class="px-2 text-amber-800 bg-amber-300 rounded border-amber-900"
+                                            @click="showAssessPenaltiesModal=true"
+                                        >
+                                            <font-awesome-icon icon="fa-solid fa-gavel"></font-awesome-icon>
+                                            Assess Penalties
+                                        </button>
+                                        <button class="px-2 text-red-700 bg-red-300 rounded border-red-900" @click="showRebuildModal=true">
+                                            <font-awesome-icon icon="fa-solid fa-arrows-rotate"></font-awesome-icon>
+                                            Rebuild Pmt Sched
+                                        </button>
+                                    </div>
                                 </div>
                                 <table class="mb-4">
                                     <thead>
@@ -202,6 +219,13 @@ const rebuild = () => {
         :paymentSchedule="selectedPaymentSchedule"
         :show="showRemovePenaltyModal"
         @close="showRemovePenaltyModal=false"
+    />
+
+    <AssessPenaltiesModal
+        v-if="borrower.activeLoan"
+        :loan="borrower.activeLoan"
+        :show="showAssessPenaltiesModal"
+        @close="showAssessPenaltiesModal=false"
     />
 
     <Modal maxWidth="lg" :show="showRebuildModal" @close="showRebuildModal=false">

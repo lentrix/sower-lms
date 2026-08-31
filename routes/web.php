@@ -3,12 +3,12 @@
 use App\Http\Controllers\BorrowerController;
 use App\Http\Controllers\LoanController;
 use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\PenaltyController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SystemLogController;
 use App\Http\Controllers\ReportsController;
 use App\Http\Controllers\UserController;
 use App\Models\DashboardController;
-use App\Models\PaymentSchedule;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -17,9 +17,9 @@ Route::get('/', function () {
     return Inertia::render('Auth/Login');
 });
 
-Route::get('/dashboard', [DashboardController::class,'index'])->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/dashboard', [DashboardController::class,'index'])->middleware(['auth', 'verified', \App\Http\Middleware\AssessPenalties::class])->name('dashboard');
 
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth', \App\Http\Middleware\AssessPenalties::class])->group(function () {
 
     Route::get('/borrowers/create',[BorrowerController::class, 'create'])->name('borrowers.create');
     Route::get('/borrowers/filter',[BorrowerController::class, 'filter'])->name('borrowers.filter');
@@ -45,11 +45,6 @@ Route::middleware('auth')->group(function () {
     Route::get('/loans', [LoanController::class, 'index'])->name('loans');
     Route::post('/loans', [LoanController::class, 'store'])->name('loans.store');
 
-    Route::delete('/penalty/{paymentSchedule}', function(PaymentSchedule $paymentSchedule){
-        $paymentSchedule->penalty->delete();
-        return back()->with('success','The penalty has been removed');
-    });
-
     Route::get('/payments', [PaymentController::class, 'index'])->name('payments');
     Route::post('/payments', [PaymentController::class, 'store'])->name('payments.store');
     Route::get('/payments/payee/{borrower}', [PaymentController::class, 'pay'])->name('payments.pay');
@@ -65,6 +60,12 @@ Route::middleware('auth')->group(function () {
         Route::put('/payments/{payment}', [PaymentController::class, 'update'])->name('payments.update');
         Route::delete('/payments/{payment}', [PaymentController::class, 'destroy'])->name('payments.destroy');
         Route::get('/system-logs', [SystemLogController::class, 'index'])->name('system-logs');
+
+        // Imposing and waiving penalties both move money, so they sit behind
+        // the same permission as editing and deleting payments.
+        Route::get('/loans/{loan}/penalty-candidates', [PenaltyController::class, 'candidates']);
+        Route::post('/loans/{loan}/assess-penalties', [PenaltyController::class, 'assess']);
+        Route::delete('/penalty/{paymentSchedule}', [PenaltyController::class, 'destroy']);
     });
 
     Route::group(['middleware'=>['can:manage users']], function(){

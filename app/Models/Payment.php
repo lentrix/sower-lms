@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use Exception;
+use App\Services\PenaltyAssessor;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
@@ -29,9 +29,19 @@ class Payment extends Model
         return $this->hasMany(PenaltyPayment::class);
     }
 
+    /**
+     * Record a payment and spread it across the loan's penalties and schedules.
+     * Wrapped in a transaction so a failure part-way through allocation cannot
+     * leave a payment row with only some of its allocations written.
+     */
     public static function pay(Loan $loan, $amountToPay, $orNo, $date) {
 
-        try {
+        return DB::transaction(function() use ($loan, $amountToPay, $orNo, $date) {
+
+            // Bring this loan's penalties up to date first. Nothing else
+            // guarantees assessment has run recently, and allocation must never
+            // split money against a stale penalty set.
+            app(PenaltyAssessor::class)->assess($loan);
 
             $pmt = Payment::create([
                 'loan_id' => $loan->id,
@@ -42,9 +52,8 @@ class Payment extends Model
 
             $pmt->allocate();
 
-        }catch(Exception $ex) {
-            dd($ex);
-        }
+            return $pmt;
+        });
     }
 
     /**

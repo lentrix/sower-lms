@@ -10,7 +10,8 @@ const props = defineProps({
     summary: Object,
     filter: Object,
     dueToday: Array,
-    planTypes: null
+    planTypes: null,
+    penaltyAssessment: Object
 })
 
 const typeName = ['','Arawan','Weekly','Bi-Monthly']
@@ -36,6 +37,18 @@ console.log(props.filter)
        <PageContent>
             <div class="">
                 <h2 class="mb-4 text-2xl">Dashboard</h2>
+
+                <div
+                    v-if="penaltyAssessment && penaltyAssessment.state !== 'ok'"
+                    class="flex gap-2 items-center p-3 mb-4 text-amber-900 bg-amber-100 rounded border border-amber-300"
+                >
+                    <font-awesome-icon icon="fa-solid fa-triangle-exclamation" />
+                    <span>{{ penaltyAssessment.message }}</span>
+                </div>
+                <div v-else-if="penaltyAssessment" class="mb-4 text-sm text-gray-500">
+                    {{ penaltyAssessment.message }}
+                </div>
+
                 <div class="grid grid-cols-1 gap-4 md:grid-cols-4">
                     <div>
                         <div class="px-8 py-4 rounded border shadow-sm">

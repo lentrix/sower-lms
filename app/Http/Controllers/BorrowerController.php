@@ -7,6 +7,7 @@ use App\Models\Loan;
 use App\Models\LoanPayment;
 use App\Models\Penalty;
 use App\Models\PenaltyPayment;
+use App\Services\PenaltyAssessor;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -119,10 +120,17 @@ class BorrowerController extends Controller
         return redirect('/loans/create/' . $borrower->id)->with('info', 'New borrower created.');
     }
 
-    public function show(Borrower $borrower) {
+    public function show(Borrower $borrower, PenaltyAssessor $assessor) {
+
+        // Bring this loan's penalties up to date before displaying them.
+        // No-op unless a cutover date is configured.
+        if($borrower->activeLoan) $assessor->assess($borrower->activeLoan);
 
         return inertia('Borrowers/Show', [
             'borrower' => $borrower,
+            'canAssessPenalties'    => $borrower->activeLoan
+                                        ? $assessor->candidates($borrower->activeLoan, true)->isNotEmpty()
+                                        : false,
             'payment_schedules'     => $borrower->activeLoan ? $borrower->activeLoan->paymentSchedules : [],
             'pending_loan'          => $borrower->getPendingLoan(),
             'totalAmountDue'        => $borrower->activeLoan ? $borrower->activeLoan->totalLoanPayable : 0,

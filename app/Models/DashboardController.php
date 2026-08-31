@@ -2,12 +2,48 @@
 
 namespace App\Models;
 
+use App\Services\PenaltyAssessor;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Date;
 
 class DashboardController extends Model
 {
-    public function index() {
+    /**
+     * Whether penalty assessment is actually running, for the dashboard banner.
+     *
+     * The original failure in this system was not a broken rule - it was that
+     * nothing ever said the assessment had never run. This makes that state
+     * impossible to miss.
+     */
+    private function penaltyAssessmentStatus(PenaltyAssessor $assessor): array {
+
+        if(!$assessor->isAutomaticAssessmentEnabled()) {
+            return [
+                'state' => 'disabled',
+                'message' => 'Automatic penalty assessment is not enabled. Set PENALTY_ASSESSMENT_START_DATE to begin.',
+            ];
+        }
+
+        $last = SystemLog::where('action','penalty.assessed.auto')->latest('id')->first();
+
+        if(!$last) {
+            return [
+                'state' => 'stale',
+                'message' => 'Automatic penalty assessment is enabled but has not run yet.',
+            ];
+        }
+
+        $hours = $last->created_at->diffInHours(Date::now());
+
+        return [
+            'state' => $hours > 48 ? 'stale' : 'ok',
+            'message' => $hours > 48
+                ? 'Penalties last assessed ' . $last->created_at->diffForHumans() . '.'
+                : 'Penalties last assessed ' . $last->created_at->format('M d, Y') . '.',
+        ];
+    }
+
+    public function index(PenaltyAssessor $assessor) {
 
         $summary = [];
 
@@ -69,7 +105,8 @@ class DashboardController extends Model
                 'town' => $town,
                 'barangay' => $barangay
             ],
-            'planTypes' => config('sower.plan_types')
+            'planTypes' => config('sower.plan_types'),
+            'penaltyAssessment' => $this->penaltyAssessmentStatus($assessor)
         ]);
     }
 }
